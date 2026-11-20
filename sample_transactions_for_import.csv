@@ -1,0 +1,16 @@
+date,description,amount,transaction_type,category
+2026-11-02,Freelance FullStack Consulting Payment,35000.00,income,salary
+2026-11-04,Swiggy Online Gourmet Food Delivery,640.00,expense,dining
+2026-11-06,Shell Auto Fuel & Petrol Refill,2100.00,expense,transport
+2026-11-07,DMart Supermarket Grocery Shopping,4320.00,expense,groceries
+2026-11-09,Tata Power Monthly Electricity Bill,2350.00,expense,utilities
+2026-11-11,Apollo Pharmacy Medicines & Health Check,1450.00,expense,healthcare
+2026-11-13,Netflix & Spotify Premium Subscription,999.00,expense,entertainment
+2026-11-14,Amazon Online Electronics & Gadgets,6499.00,expense,shopping
+2026-11-16,Zomato Weekend Dinner with Friends,1850.00,expense,dining
+2026-11-17,Uber Cab Travel to Airport,850.00,expense,transport
+2026-11-18,Dividend Credit - TCS Shares,1200.00,income,investment
+2026-11-19,Nippon India Mutual Fund Additional SIP,10000.00,expense,investment
+2026-11-20,Myntra Festive Apparel & Shoes,3200.00,expense,shopping
+2026-11-21,HDFC Bank Savings Account Interest,850.00,income,investment
+2026-11-22,BookMyShow IMAX Movie Tickets,780.00,expense,entertainment
