@@ -1,0 +1,14 @@
+{
+  "emergency_fund": {
+    "emergency_fund_balance": "150000.00",
+    "essential_categories": [
+      "rent",
+      "groceries",
+      "utilities",
+      "healthcare",
+      "transport"
+    ],
+    "analysis_window_months": 12,
+    "updated_at": "2026-10-21T06:56:57.252410+00:00"
+  }
+}

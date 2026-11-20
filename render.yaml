@@ -1,0 +1,49 @@
+# ============================================================================
+# Render Blueprint Specification: Cloud Deployment
+# AI-Powered Personal Financial Portfolio Management & Decision Support System
+# Services:
+#   1. ai-portfolio-db: Managed PostgreSQL Database (Free Tier)
+#   2. ai-portfolio-backend: FastAPI Python 3.12 Web Service
+# ============================================================================
+
+services:
+  - type: web
+    name: ai-portfolio-backend
+    env: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ai-portfolio-db
+          property: connectionString
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "60"
+      - key: CORS_ORIGINS
+        value: "http://localhost:3000,http://127.0.0.1:3000"
+      - key: LLM_PROVIDER
+        value: groq
+      - key: GROQ_API_KEY
+        sync: false
+      - key: LLM_API_KEY
+        sync: false
+      - key: LLM_MODEL
+        value: openai/gpt-oss-120b
+      - key: LLM_API_BASE
+        value: https://api.groq.com/openai/v1
+      - key: NEWS_MOCK_MODE
+        value: "false"
+
+databases:
+  - name: ai-portfolio-db
+    databaseName: portfolio_db
+    user: app
+    plan: free

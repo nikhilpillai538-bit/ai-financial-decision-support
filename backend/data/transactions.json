@@ -1,0 +1,38 @@
+[
+  {
+    "id": "ae8e25ef-491d-4272-8d98-371ad7b10e96",
+    "date": "2026-10-20",
+    "description": "Monthly salary",
+    "amount": "45000.00",
+    "transaction_type": "income",
+    "category": "salary",
+    "source": "manual"
+  },
+  {
+    "id": "8aeb9b4a-23e1-4035-9135-042abcfe366f",
+    "date": "2026-10-01",
+    "description": "Rent payment",
+    "amount": "12000.00",
+    "transaction_type": "expense",
+    "category": "rent",
+    "source": "csv_import"
+  },
+  {
+    "id": "be608609-4ebf-4eb1-9029-496e04ba38d7",
+    "date": "2026-10-05",
+    "description": "Swiggy dinner order",
+    "amount": "450.00",
+    "transaction_type": "expense",
+    "category": "dining",
+    "source": "csv_import"
+  },
+  {
+    "id": "dbfa1902-c2f9-4d79-a27e-79c69bd2aa02",
+    "date": "2026-10-05",
+    "description": "Monthly salary",
+    "amount": "45000.00",
+    "transaction_type": "income",
+    "category": "salary",
+    "source": "csv_import"
+  }
+]
