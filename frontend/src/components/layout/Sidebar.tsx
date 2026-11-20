@@ -46,7 +46,7 @@ export function Sidebar({ className, onClose }: { className?: string; onClose?: 
     >
       {/* Brand Logo & Name */}
       <div className="h-20 flex items-center px-6 gap-3.5 border-b border-slate-800/70 bg-slate-950/80 backdrop-blur-md">
-        <div className="w-11 h-11 rounded-2xl bg-linear-to-tr from-indigo-600 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/30 ring-1 ring-white/20">
+        <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-600 bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/30 ring-1 ring-white/20">
           <Sparkles className="w-6 h-6 animate-pulse" />
         </div>
         <div className="flex flex-col">
@@ -76,7 +76,7 @@ export function Sidebar({ className, onClose }: { className?: string; onClose?: 
               className={cn(
                 "flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-150 group",
                 isActive
-                  ? "bg-linear-to-r from-indigo-600 to-indigo-700 text-white shadow-md shadow-indigo-600/25 font-bold"
+                  ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-bold"
                   : "text-slate-400 hover:text-white hover:bg-slate-900/90 hover:translate-x-0.5"
               )}
             >

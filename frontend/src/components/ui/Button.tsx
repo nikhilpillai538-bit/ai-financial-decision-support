@@ -25,15 +25,15 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const variants = {
       primary:
-        "bg-linear-to-r from-indigo-600 to-indigo-700 text-white hover:from-indigo-500 hover:to-indigo-600 active:from-indigo-700 active:to-indigo-800 shadow-sm hover:shadow-indigo-500/25 focus-visible:ring-indigo-500",
+        "bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold shadow-md shadow-indigo-600/30 focus-visible:ring-indigo-500",
       secondary:
-        "bg-slate-100 text-slate-800 hover:bg-slate-200 active:bg-slate-300 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 focus-visible:ring-slate-400",
+        "bg-slate-100 text-slate-800 hover:bg-slate-200 active:bg-slate-300 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 focus-visible:ring-slate-400 font-semibold",
       outline:
-        "border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800 focus-visible:ring-slate-400",
+        "border-2 border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800 focus-visible:ring-slate-400 font-semibold",
       danger:
-        "bg-linear-to-r from-rose-600 to-rose-700 text-white hover:from-rose-500 hover:to-rose-600 active:from-rose-700 active:to-rose-800 shadow-sm hover:shadow-rose-500/25 focus-visible:ring-rose-500",
+        "bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-bold shadow-md shadow-rose-600/30 focus-visible:ring-rose-500",
       ghost:
-        "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 focus-visible:ring-slate-400",
+        "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 focus-visible:ring-slate-400 font-semibold",
     };
 
     const sizes = {

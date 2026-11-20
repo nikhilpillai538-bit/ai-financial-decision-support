@@ -28,7 +28,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
         {user ? (
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-linear-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-md shadow-indigo-500/20">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-md shadow-indigo-500/20">
                 {user.email ? user.email.charAt(0).toUpperCase() : <UserIcon className="w-5 h-5" />}
               </div>
               <div className="hidden sm:flex flex-col text-left">
