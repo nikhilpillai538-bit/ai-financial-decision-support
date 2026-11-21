@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Card,
   CardHeader,
@@ -25,7 +25,6 @@ import {
   optimizationApi,
   OptimizePortfolioPayload,
   MarketPreset,
-  YahooFetchHistoricalResponse,
 } from "@/lib/api/optimization";
 import { goalsApi } from "@/lib/api/goals";
 import {
@@ -37,7 +36,6 @@ import {
 import { formatCurrency, formatPercentage, formatDate } from "@/lib/formatters";
 import {
   TrendingUp,
-  ShieldAlert,
   Percent,
   Play,
   History,
@@ -47,7 +45,6 @@ import {
   Scale,
   ArrowRight,
   Zap,
-  Globe,
   Sparkles,
   CheckCircle2,
 } from "lucide-react";
@@ -108,17 +105,18 @@ export default function OptimizationPage() {
     setError(null);
     try {
       const [ports, md, presetList] = await Promise.all([
-        portfolioApi.listPortfolios(),
+        portfolioApi.listPortfolios().catch(() => []),
         optimizationApi.getMarketDataSummary().catch(() => null),
         optimizationApi.getMarketPresets().catch(() => []),
       ]);
-      setPortfolios(ports);
+      const validPorts = Array.isArray(ports) ? ports : [];
+      setPortfolios(validPorts);
       setMarketData(md);
-      if (presetList && presetList.length > 0) {
+      if (Array.isArray(presetList) && presetList.length > 0) {
         setPresets(presetList);
       }
-      if (ports.length > 0) {
-        setSelectedPortfolioId(ports[0].id);
+      if (validPorts.length > 0) {
+        setSelectedPortfolioId(validPorts[0].id);
       }
     } catch (err: any) {
       setError(err?.message || "Failed to load portfolios or market data");
@@ -128,16 +126,18 @@ export default function OptimizationPage() {
   }
 
   async function loadPortfolioDetails(portfolioId: string) {
+    if (!portfolioId) return;
     setIsLoadingDrift(true);
     try {
       const [hist, driftData] = await Promise.all([
         optimizationApi.getOptimizationHistory(portfolioId).catch(() => []),
         goalsApi.getPortfolioDrift(portfolioId, 5.0).catch(() => null),
       ]);
-      setHistory(hist);
+      const validHist = Array.isArray(hist) ? hist : [];
+      setHistory(validHist);
       setDrift(driftData);
-      if (hist.length > 0) {
-        setOptimizationResult(hist[0]);
+      if (validHist.length > 0) {
+        setOptimizationResult(validHist[0]);
       } else {
         setOptimizationResult(null);
       }
@@ -170,7 +170,7 @@ export default function OptimizationPage() {
       setOptimizationResult(res);
       // Reload history and drift
       const hist = await optimizationApi.getOptimizationHistory(selectedPortfolioId).catch(() => []);
-      setHistory(hist);
+      setHistory(Array.isArray(hist) ? hist : []);
       const updatedDrift = await goalsApi.getPortfolioDrift(selectedPortfolioId, 5.0).catch(() => null);
       setDrift(updatedDrift);
     } catch (err: any) {
@@ -239,6 +239,86 @@ export default function OptimizationPage() {
     }
   }
 
+  // Robust derivations to prevent any undefined crashes across backend schema variations
+  const resolvedWeights: Record<string, number> = useMemo(() => {
+    if (!optimizationResult) return {};
+    const res: Record<string, number> = {};
+    if (optimizationResult.weights && typeof optimizationResult.weights === "object") {
+      Object.entries(optimizationResult.weights).forEach(([sym, w]) => {
+        res[sym] = parseFloat(String(w)) || 0;
+      });
+    } else if (Array.isArray((optimizationResult as any).allocations)) {
+      (optimizationResult as any).allocations.forEach((al: any) => {
+        if (al.symbol) {
+          res[al.symbol] = parseFloat(String(al.optimal_weight ?? al.weight ?? 0)) || 0;
+        }
+      });
+    }
+    return res;
+  }, [optimizationResult]);
+
+  const resolvedTrades = useMemo(() => {
+    if (!optimizationResult) return [];
+    if (optimizationResult.rebalancing_trades && optimizationResult.rebalancing_trades.length > 0) {
+      return optimizationResult.rebalancing_trades;
+    }
+    if (Array.isArray((optimizationResult as any).allocations)) {
+      return (optimizationResult as any).allocations
+        .filter((al: any) => al.action && String(al.action).toUpperCase() !== "HOLD" && String(al.action).toLowerCase() !== "none")
+        .map((al: any) => ({
+          asset_symbol: al.symbol,
+          action: String(al.action).toLowerCase() as "buy" | "sell" | "hold",
+          units: String(al.target_shares || al.units || "—"),
+          estimated_amount: String(al.trade_amount || al.estimated_amount || "0"),
+        }));
+    }
+    return [];
+  }, [optimizationResult]);
+
+  const resolvedDriftItems = useMemo(() => {
+    const rawList = drift?.drift_items || (drift as any)?.asset_classes || [];
+    if (!Array.isArray(rawList)) return [];
+
+    return rawList.map((it: any) => {
+      const rawCurr = it.current_weight_percentage ?? it.current_weight ?? 0;
+      const numCurr = typeof rawCurr === "number" ? rawCurr : parseFloat(rawCurr) || 0;
+      const currPct = Math.abs(numCurr) <= 1 && numCurr !== 0 ? numCurr * 100 : numCurr;
+
+      const rawTgt = it.target_weight_percentage ?? it.target_weight ?? 0;
+      const numTgt = typeof rawTgt === "number" ? rawTgt : parseFloat(rawTgt) || 0;
+      const tgtPct = Math.abs(numTgt) <= 1 && numTgt !== 0 ? numTgt * 100 : numTgt;
+
+      const rawDrift = it.absolute_drift_percentage_points ?? it.drift ?? 0;
+      const numDrift = typeof rawDrift === "number" ? rawDrift : parseFloat(rawDrift) || 0;
+      const driftPct = Math.abs(numDrift) <= 1 && numDrift !== 0 ? numDrift * 100 : numDrift;
+
+      let action = "HOLD";
+      if (it.action) {
+        action = String(it.action).toUpperCase();
+      } else if (it.status) {
+        if (it.status === "underweight") action = "BUY";
+        else if (it.status === "overweight") action = "SELL";
+        else action = "HOLD";
+      }
+
+      return {
+        asset_class: it.asset_class || "Asset",
+        current_weight: currPct,
+        target_weight: tgtPct,
+        drift: driftPct,
+        action,
+        status: it.status || "on_target",
+        exceeds_threshold: Boolean(it.exceeds_threshold ?? (driftPct > 5)),
+      };
+    });
+  }, [drift]);
+
+  const isDriftBreached = Boolean(
+    drift?.threshold_breached ??
+    (drift as any)?.portfolio_exceeds_threshold ??
+    resolvedDriftItems.some((it) => it.exceeds_threshold)
+  );
+
   if (isLoadingPortfolios) {
     return <LoadingState message="Loading portfolio optimization engine..." />;
   }
@@ -271,7 +351,7 @@ export default function OptimizationPage() {
           <Button
             variant="outline"
             size="md"
-            onClick={() => loadPortfolioDetails(selectedPortfolioId)}
+            onClick={() => selectedPortfolioId && loadPortfolioDetails(selectedPortfolioId)}
             disabled={!selectedPortfolioId}
           >
             <RefreshCw className="w-4 h-4 mr-1.5" />
@@ -289,8 +369,8 @@ export default function OptimizationPage() {
             <span className="font-semibold text-slate-700">Market Data Store:</span>
             {marketData ? (
               <span className="text-slate-600">
-                <span className="font-medium text-slate-900">{marketData.symbols_count}</span> symbols indexed (
-                <span className="font-medium text-slate-900">{marketData.data_points_count}</span> price observations)
+                <span className="font-medium text-slate-900">{marketData.symbols_count || 0}</span> symbols indexed (
+                <span className="font-medium text-slate-900">{marketData.data_points_count || 0}</span> price observations)
                 {marketData.date_range_start && (
                   <span className="text-slate-500 ml-1">
                     from {formatDate(marketData.date_range_start)} to {formatDate(marketData.date_range_end)}
@@ -306,7 +386,7 @@ export default function OptimizationPage() {
           <div className="flex items-center gap-2 text-slate-500">
             <span>Covariance Model: <strong className="text-slate-800">Ledoit-Wolf / Sample</strong></span>
             <span>•</span>
-            <span>Risk-Free Benchmark: <strong className="text-slate-800">RBI 91D T-Bill ({parseFloat(riskFreeRate) * 100}%)</strong></span>
+            <span>Risk-Free Benchmark: <strong className="text-slate-800">RBI 91D T-Bill ({(parseFloat(riskFreeRate || "0.06") * 100).toFixed(1)}%)</strong></span>
           </div>
         </div>
       </Card>
@@ -326,7 +406,7 @@ export default function OptimizationPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
-                  <Sliders className="w-4 h-4 text-primary-600" />
+                  <Sliders className="w-4 h-4 text-indigo-600" />
                   Optimization Parameters
                 </CardTitle>
                 <CardDescription>
@@ -342,7 +422,7 @@ export default function OptimizationPage() {
                     <select
                       value={selectedPortfolioId}
                       onChange={(e) => setSelectedPortfolioId(e.target.value)}
-                      className="w-full text-sm rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full text-sm rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     >
                       {portfolios.map((p) => (
                         <option key={p.id} value={p.id}>
@@ -359,7 +439,7 @@ export default function OptimizationPage() {
                     <select
                       value={objective}
                       onChange={(e) => setObjective(e.target.value as any)}
-                      className="w-full text-sm rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full text-sm rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     >
                       <option value="max_sharpe">Maximize Sharpe Ratio (Tangency)</option>
                       <option value="min_volatility">Minimize Volatility (Global Minimum Variance)</option>
@@ -439,30 +519,35 @@ export default function OptimizationPage() {
                   </div>
                 ) : (
                   <div className="divide-y divide-slate-100 max-h-64 overflow-y-auto">
-                    {history.map((h, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => setOptimizationResult(h)}
-                        className={`w-full text-left p-3 text-xs hover:bg-slate-50 flex items-center justify-between ${
-                          optimizationResult === h ? "bg-primary-50/50" : ""
-                        }`}
-                      >
-                        <div>
-                          <div className="font-medium text-slate-800 capitalize">
-                            {h.objective.replace("_", " ")}
-                          </div>
-                          <div className="text-slate-500">
-                            Exp. Return: {formatPercentage(h.expected_return)} • Vol: {formatPercentage(h.volatility)}
-                          </div>
-                        </div>
-                        <Badge
-                          variant={h.solver_status === "optimal" ? "success" : "warning"}
+                    {history.map((h: any, i: number) => {
+                      const strat = String(h.strategy || h.objective || "Optimal Run").replace(/_/g, " ");
+                      const expVol = h.expected_volatility ?? h.volatility;
+                      const statusVal = h.solver_status || "optimal";
+                      return (
+                        <button
+                          key={h.id || i}
+                          type="button"
+                          onClick={() => setOptimizationResult(h)}
+                          className={`w-full text-left p-3 text-xs hover:bg-slate-50 flex items-center justify-between transition-colors ${
+                            optimizationResult === h ? "bg-indigo-50/50 font-medium" : ""
+                          }`}
                         >
-                          {h.solver_status}
-                        </Badge>
-                      </button>
-                    ))}
+                          <div>
+                            <div className="font-semibold text-slate-800 capitalize">
+                              {strat}
+                            </div>
+                            <div className="text-slate-500 mt-0.5">
+                              Exp. Return: {formatPercentage(h.expected_return)} • Vol: {formatPercentage(expVol)}
+                            </div>
+                          </div>
+                          <Badge
+                            variant={statusVal === "optimal" ? "success" : "warning"}
+                          >
+                            {statusVal}
+                          </Badge>
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </CardContent>
@@ -479,11 +564,11 @@ export default function OptimizationPage() {
                     title="Expected Annual Return"
                     value={formatPercentage(optimizationResult.expected_return)}
                     icon={<TrendingUp className="w-4 h-4 text-emerald-600" />}
-                    subtitle={`Annualized (${optimizationResult.objective})`}
+                    subtitle={`Annualized (${String(optimizationResult.strategy || optimizationResult.objective || "Optimal").replace(/_/g, " ")})`}
                   />
                   <MetricCard
                     title="Annualized Volatility"
-                    value={formatPercentage(optimizationResult.volatility)}
+                    value={formatPercentage(optimizationResult.expected_volatility ?? optimizationResult.volatility)}
                     icon={<Percent className="w-4 h-4 text-amber-600" />}
                     subtitle="Standard deviation of returns"
                   />
@@ -491,11 +576,11 @@ export default function OptimizationPage() {
                     title="Sharpe Ratio"
                     value={
                       optimizationResult.sharpe_ratio !== undefined && optimizationResult.sharpe_ratio !== null
-                        ? parseFloat(optimizationResult.sharpe_ratio).toFixed(2)
+                        ? parseFloat(String(optimizationResult.sharpe_ratio)).toFixed(2)
                         : "—"
                     }
                     icon={<Scale className="w-4 h-4 text-blue-600" />}
-                    subtitle={`Above Rf: ${(parseFloat(riskFreeRate) * 100).toFixed(1)}%`}
+                    subtitle={`Above Rf: ${(parseFloat(riskFreeRate || "0.06") * 100).toFixed(1)}%`}
                   />
                 </div>
 
@@ -509,8 +594,8 @@ export default function OptimizationPage() {
                           Mathematically solved asset weights satisfying all objective constraints.
                         </CardDescription>
                       </div>
-                      <Badge variant={optimizationResult.solver_status === "optimal" ? "success" : "info"}>
-                        Status: {optimizationResult.solver_status}
+                      <Badge variant={(optimizationResult.solver_status || "optimal") === "optimal" ? "success" : "info"}>
+                        Status: {optimizationResult.solver_status || "Optimal"}
                       </Badge>
                     </div>
                   </CardHeader>
@@ -525,27 +610,35 @@ export default function OptimizationPage() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                          {Object.entries(optimizationResult.weights || {}).map(([symbol, weight]) => {
-                            const pct = (parseFloat(weight) || 0) * 100;
-                            return (
-                              <tr key={symbol} className="hover:bg-slate-50/50">
-                                <td className="px-4 py-2.5 font-medium text-slate-900">
-                                  {symbol}
-                                </td>
-                                <td className="px-4 py-2.5 text-right font-semibold text-slate-800">
-                                  {pct.toFixed(2)}%
-                                </td>
-                                <td className="px-4 py-2.5 text-right w-48">
-                                  <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                                    <div
-                                      className="bg-primary-600 h-2 rounded-full"
-                                      style={{ width: `${Math.min(pct, 100)}%` }}
-                                    />
-                                  </div>
-                                </td>
-                              </tr>
-                            );
-                          })}
+                          {Object.keys(resolvedWeights).length === 0 ? (
+                            <tr>
+                              <td colSpan={3} className="px-4 py-4 text-center text-slate-400">
+                                No asset weight breakdown available for this optimization.
+                              </td>
+                            </tr>
+                          ) : (
+                            Object.entries(resolvedWeights).map(([symbol, weight]) => {
+                              const pct = weight * (Math.abs(weight) <= 1 && weight !== 0 ? 100 : 1);
+                              return (
+                                <tr key={symbol} className="hover:bg-slate-50/50">
+                                  <td className="px-4 py-2.5 font-medium text-slate-900">
+                                    {symbol}
+                                  </td>
+                                  <td className="px-4 py-2.5 text-right font-semibold text-slate-800">
+                                    {pct.toFixed(2)}%
+                                  </td>
+                                  <td className="px-4 py-2.5 text-right w-48">
+                                    <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                                      <div
+                                        className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+                                        style={{ width: `${Math.max(0, Math.min(pct, 100))}%` }}
+                                      />
+                                    </div>
+                                  </td>
+                                </tr>
+                              );
+                            })
+                          )}
                         </tbody>
                       </table>
                     </div>
@@ -553,7 +646,7 @@ export default function OptimizationPage() {
                 </Card>
 
                 {/* Rebalancing Trades */}
-                {optimizationResult.rebalancing_trades && optimizationResult.rebalancing_trades.length > 0 && (
+                {resolvedTrades.length > 0 && (
                   <Card>
                     <CardHeader>
                       <CardTitle className="text-base">Suggested Rebalancing Trades</CardTitle>
@@ -573,32 +666,35 @@ export default function OptimizationPage() {
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-slate-100">
-                            {optimizationResult.rebalancing_trades.map((tr, idx) => (
-                              <tr key={idx} className="hover:bg-slate-50/50">
-                                <td className="px-4 py-2.5 font-medium text-slate-900">
-                                  {tr.asset_symbol}
-                                </td>
-                                <td className="px-4 py-2.5">
-                                  <Badge
-                                    variant={
-                                      tr.action === "buy"
-                                        ? "success"
-                                        : tr.action === "sell"
-                                        ? "danger"
-                                        : "outline"
-                                    }
-                                  >
-                                    {tr.action.toUpperCase()}
-                                  </Badge>
-                                </td>
-                                <td className="px-4 py-2.5 text-right font-medium text-slate-700">
-                                  {tr.units}
-                                </td>
-                                <td className="px-4 py-2.5 text-right font-semibold text-slate-900">
-                                  {formatCurrency(tr.estimated_amount)}
-                                </td>
-                              </tr>
-                            ))}
+                            {resolvedTrades.map((tr: any, idx: number) => {
+                              const act = String(tr.action || "HOLD").toUpperCase();
+                              return (
+                                <tr key={idx} className="hover:bg-slate-50/50">
+                                  <td className="px-4 py-2.5 font-medium text-slate-900">
+                                    {tr.asset_symbol || tr.symbol}
+                                  </td>
+                                  <td className="px-4 py-2.5">
+                                    <Badge
+                                      variant={
+                                        act === "BUY"
+                                          ? "success"
+                                          : act === "SELL"
+                                          ? "danger"
+                                          : "outline"
+                                      }
+                                    >
+                                      {act}
+                                    </Badge>
+                                  </td>
+                                  <td className="px-4 py-2.5 text-right font-medium text-slate-700">
+                                    {tr.units}
+                                  </td>
+                                  <td className="px-4 py-2.5 text-right font-semibold text-slate-900">
+                                    {formatCurrency(tr.estimated_amount)}
+                                  </td>
+                                </tr>
+                              );
+                            })}
                           </tbody>
                         </table>
                       </div>
@@ -643,7 +739,7 @@ export default function OptimizationPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="text-base flex items-center gap-2">
-                      <Scale className="w-4 h-4 text-primary-600" />
+                      <Scale className="w-4 h-4 text-indigo-600" />
                       Asset Allocation Drift Analysis
                     </CardTitle>
                     <CardDescription>
@@ -651,8 +747,8 @@ export default function OptimizationPage() {
                     </CardDescription>
                   </div>
                   {drift && (
-                    <Badge variant={drift.threshold_breached ? "danger" : "success"}>
-                      {drift.threshold_breached ? "Drift Breach Detected" : "Within 5% Tolerance"}
+                    <Badge variant={isDriftBreached ? "danger" : "success"}>
+                      {isDriftBreached ? "Drift Breach Detected" : "Within 5% Tolerance"}
                     </Badge>
                   )}
                 </div>
@@ -660,9 +756,9 @@ export default function OptimizationPage() {
               <CardContent className="space-y-4">
                 {isLoadingDrift ? (
                   <LoadingState message="Checking allocation drift against targets..." />
-                ) : drift && drift.drift_items && drift.drift_items.length > 0 ? (
+                ) : resolvedDriftItems.length > 0 ? (
                   <>
-                    <DriftComparisonBarChart items={drift.drift_items} height={240} />
+                    <DriftComparisonBarChart items={resolvedDriftItems as any} height={240} />
                     <div className="overflow-x-auto border-t border-slate-100 pt-3">
                       <table className="w-full text-xs text-left">
                         <thead className="text-slate-500">
@@ -675,7 +771,7 @@ export default function OptimizationPage() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                          {drift.drift_items.map((it, idx) => (
+                          {resolvedDriftItems.map((it: any, idx: number) => (
                             <tr key={idx}>
                               <td className="py-2 font-medium text-slate-800 capitalize">
                                 {it.asset_class}
@@ -688,9 +784,7 @@ export default function OptimizationPage() {
                               </td>
                               <td
                                 className={`py-2 text-right font-medium ${
-                                  Math.abs(parseFloat(it.drift) || 0) > 0.05
-                                    ? "text-rose-600"
-                                    : "text-slate-600"
+                                  it.drift > 5 ? "text-rose-600" : "text-slate-600"
                                 }`}
                               >
                                 {formatPercentage(it.drift)}
@@ -698,14 +792,14 @@ export default function OptimizationPage() {
                               <td className="py-2 text-right">
                                 <Badge
                                   variant={
-                                    it.action === "buy"
+                                    it.action === "BUY"
                                       ? "success"
-                                      : it.action === "sell"
+                                      : it.action === "SELL"
                                       ? "danger"
                                       : "outline"
                                   }
                                 >
-                                  {it.action.toUpperCase()}
+                                  {it.action}
                                 </Badge>
                               </td>
                             </tr>
@@ -872,7 +966,7 @@ export default function OptimizationPage() {
                 type="file"
                 accept=".csv"
                 onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
-                className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
+                className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
               />
 
               {uploadSuccess && (

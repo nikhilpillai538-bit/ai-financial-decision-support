@@ -188,20 +188,38 @@ export interface AssetAllocationAnalysis {
 
 export interface OptimizationResult {
   portfolio_id: string;
-  objective: "max_sharpe" | "min_volatility" | "target_return";
-  expected_return: string;
-  volatility: string;
-  sharpe_ratio: string;
-  weights: Record<string, string>;
+  objective?: "max_sharpe" | "min_volatility" | "target_return" | string;
+  strategy?: string;
+  expected_return: string | number;
+  volatility?: string | number;
+  expected_volatility?: string | number;
+  sharpe_ratio: string | number;
+  weights?: Record<string, string | number>;
+  allocations?: Array<{
+    asset_id?: string;
+    symbol: string;
+    name?: string;
+    asset_class?: string;
+    current_weight?: string | number;
+    optimal_weight?: string | number;
+    weight_delta?: string | number;
+    current_value?: string | number;
+    target_value?: string | number;
+    action?: string;
+    trade_amount?: string | number;
+    target_shares?: string | number;
+  }>;
   frontier?: Array<{ expected_return: string; volatility: string; sharpe_ratio: string }>;
   rebalancing_trades?: Array<{
     asset_symbol: string;
-    action: "buy" | "sell" | "hold";
+    action: "buy" | "sell" | "hold" | string;
     units: string;
     estimated_amount: string;
   }>;
-  solver_status: string;
-  assumptions: string[];
+  solver_status?: string;
+  assumptions?: string[];
+  warnings?: string[];
+  methodology?: string;
 }
 
 export interface MarketDataSummary {
@@ -263,21 +281,33 @@ export interface GoalProjection {
 
 export interface PortfolioDriftItem {
   asset_class: string;
-  current_weight: string;
-  target_weight: string;
-  drift: string;
-  action: "buy" | "sell" | "rebalance" | "none";
+  current_weight?: string | number;
+  target_weight?: string | number;
+  current_weight_percentage?: string | number;
+  target_weight_percentage?: string | number;
+  drift?: string | number;
+  absolute_drift_percentage_points?: string | number;
+  relative_drift_percentage?: string | number;
+  status?: string;
+  action?: "buy" | "sell" | "rebalance" | "none" | string;
   recommended_trade_amount?: string;
+  exceeds_threshold?: boolean;
 }
 
 export interface PortfolioDrift {
   portfolio_id: string;
-  max_drift: string;
-  threshold_breached: boolean;
-  drift_items: PortfolioDriftItem[];
-  suggested_trades: Array<{
+  portfolio_name?: string;
+  base_currency?: string;
+  total_portfolio_value?: string | number;
+  max_drift?: string;
+  max_drift_percentage_points?: string | number;
+  threshold_breached?: boolean;
+  portfolio_exceeds_threshold?: boolean;
+  drift_items?: PortfolioDriftItem[];
+  asset_classes?: PortfolioDriftItem[];
+  suggested_trades?: Array<{
     asset_class: string;
-    action: "buy" | "sell";
+    action: "buy" | "sell" | string;
     trade_amount: string;
   }>;
 }
