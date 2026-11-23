@@ -305,17 +305,28 @@ def import_csv(
             detail="Could not parse CSV file.",
         )
 
-    missing = CSV_REQUIRED_COLUMNS - {h.strip().lower() for h in headers}
+    normalized_headers = {h.strip().lower() for h in headers if h}
+    if "type" in normalized_headers and "transaction_type" not in normalized_headers:
+        normalized_headers.add("transaction_type")
+    if "txn_type" in normalized_headers and "transaction_type" not in normalized_headers:
+        normalized_headers.add("transaction_type")
+
+    missing = CSV_REQUIRED_COLUMNS - normalized_headers
     if missing:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"Missing required CSV columns: {', '.join(sorted(missing))}.",
+            detail=f"Missing required CSV columns: {', '.join(sorted(missing))}. Expected: date, description, amount, transaction_type (or type).",
         )
 
     # Normalise header names (strip whitespace, lowercase)
     rows = []
     for row in reader:
-        rows.append({k.strip().lower(): v for k, v in row.items()})
+        r = {k.strip().lower(): v for k, v in row.items() if k}
+        if "type" in r and "transaction_type" not in r:
+            r["transaction_type"] = r["type"]
+        elif "txn_type" in r and "transaction_type" not in r:
+            r["transaction_type"] = r["txn_type"]
+        rows.append(r)
 
     if len(rows) == 0:
         return CSVImportReport(

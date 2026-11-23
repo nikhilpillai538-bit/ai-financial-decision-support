@@ -55,7 +55,11 @@ export default function OverviewPage() {
       ]);
 
       if (sumRes.status === "fulfilled") setSummary(sumRes.value);
-      if (txListRes.status === "fulfilled") setRecentTransactions(txListRes.value.items || []);
+      if (txListRes.status === "fulfilled") {
+        const val = txListRes.value;
+        const items = Array.isArray(val) ? val : (val?.items || []);
+        setRecentTransactions(items.slice(0, 5));
+      }
 
       // 2. Portfolios & Valuation
       try {

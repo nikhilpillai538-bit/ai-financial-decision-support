@@ -9,6 +9,7 @@ import {
   Receipt,
   CheckCircle2,
   Filter,
+  Download,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -60,16 +61,38 @@ export default function TransactionsPage() {
     "Other",
   ];
 
+  const downloadSampleCSV = () => {
+    const csvContent =
+      "date,description,amount,transaction_type,category\n" +
+      "2026-11-02,Freelance Consulting Payment,35000.00,income,Salary & Income\n" +
+      "2026-11-04,Swiggy Food Delivery,640.00,expense,Dining & Food\n" +
+      "2026-11-06,Shell Auto Petrol,2100.00,expense,Transportation\n" +
+      "2026-11-07,DMart Supermarket Groceries,4320.00,expense,Groceries\n" +
+      "2026-11-12,Dividend Credit TCS,1200.00,income,Investments & Savings\n" +
+      "2026-11-15,Electricity Bill Payment,2350.00,expense,Utilities\n";
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "sample_transactions.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const fetchTransactions = async () => {
     setLoading(true);
     setError(null);
     try {
       const res = await transactionsApi.listTransactions({
         category: selectedCategory || undefined,
-        limit: 50,
+        limit: 100,
       });
-      setTransactions(res.items || []);
-      setTotalCount(res.total_count || 0);
+      const items = Array.isArray(res) ? res : (res?.items || []);
+      const count = Array.isArray(res) ? res.length : (res?.total_count ?? items.length);
+      setTransactions(items);
+      setTotalCount(count);
     } catch (err: any) {
       setError(err?.message || "Failed to load transactions.");
     } finally {
@@ -138,11 +161,10 @@ export default function TransactionsPage() {
   const filteredTransactions = transactions.filter((t) => {
     if (!search) return true;
     const term = search.toLowerCase();
-    return (
-      t.description.toLowerCase().includes(term) ||
-      t.category.toLowerCase().includes(term) ||
-      t.amount.includes(term)
-    );
+    const desc = (t.description || "").toLowerCase();
+    const cat = (t.category || "").toLowerCase();
+    const amt = String(t.amount || "");
+    return desc.includes(term) || cat.includes(term) || amt.includes(term);
   });
 
   return (
@@ -392,31 +414,59 @@ export default function TransactionsPage() {
           {importError && <ErrorBanner message={importError} />}
 
           {importResult && (
-            <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs space-y-1">
-              <div className="flex items-center gap-1.5 font-semibold">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>Import Finished</span>
+            <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs space-y-1.5">
+              <div className="flex items-center gap-1.5 font-semibold text-emerald-800">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>CSV Processing Complete</span>
               </div>
-              <p>Total Rows: {importResult.total_rows}</p>
-              <p>Successfully Imported: {importResult.imported_count}</p>
-              <p>Duplicate Rows Skipped: {importResult.duplicate_count}</p>
-              {importResult.errors.length > 0 && (
-                <p className="text-rose-600">Errors: {importResult.errors.join(", ")}</p>
+              <div className="grid grid-cols-3 gap-2 text-center pt-1 font-medium">
+                <div className="bg-white/80 p-1.5 rounded border border-emerald-100">
+                  <span className="block text-slate-500 text-[10px]">Total</span>
+                  <span className="font-bold text-slate-800">{importResult.total_rows}</span>
+                </div>
+                <div className="bg-white/80 p-1.5 rounded border border-emerald-100">
+                  <span className="block text-emerald-600 text-[10px]">Imported</span>
+                  <span className="font-bold text-emerald-700">{importResult.imported_count}</span>
+                </div>
+                <div className="bg-white/80 p-1.5 rounded border border-emerald-100">
+                  <span className="block text-amber-600 text-[10px]">Duplicates</span>
+                  <span className="font-bold text-amber-700">{importResult.duplicate_count}</span>
+                </div>
+              </div>
+              {importResult.errors && importResult.errors.length > 0 && (
+                <div className="text-rose-600 pt-1 text-[11px]">
+                  <p className="font-semibold">Skipped / Error Rows:</p>
+                  <ul className="list-disc pl-4 space-y-0.5 max-h-24 overflow-y-auto">
+                    {importResult.errors.map((err, idx) => (
+                      <li key={idx}>{err}</li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </div>
           )}
 
-          <div className="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-6 text-center">
-            <Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+          <div className="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-5 text-center space-y-3">
+            <Upload className="w-8 h-8 text-slate-400 mx-auto" />
             <input
               type="file"
               accept=".csv"
               onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-              className="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+              className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
             />
-            <p className="text-[11px] text-slate-400 mt-2">
-              Expected CSV columns: Date, Amount, Type, Category, Description
-            </p>
+            <div className="text-[11px] text-slate-500 space-y-1">
+              <p>Expected columns: <code className="font-mono bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">date, description, amount, transaction_type, category</code></p>
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={downloadSampleCSV}
+                  className="inline-flex items-center gap-1.5 text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 font-semibold text-xs hover:underline"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download Sample CSV Template</span>
+                </button>
+              </div>
+            </div>
           </div>
 
           <div className="flex justify-end gap-2 pt-2">

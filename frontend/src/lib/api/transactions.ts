@@ -27,10 +27,23 @@ export interface CreateTransactionPayload {
 
 export const transactionsApi = {
   async listTransactions(params: TransactionFilterParams = {}): Promise<TransactionListResponse> {
-    return apiClient<TransactionListResponse>("/transactions", {
+    const raw = await apiClient<any>("/transactions", {
       method: "GET",
       params: params as any,
     });
+
+    const items: Transaction[] = Array.isArray(raw)
+      ? raw
+      : Array.isArray(raw?.items)
+      ? raw.items
+      : [];
+
+    return {
+      items,
+      total_count: Array.isArray(raw) ? raw.length : (raw?.total_count ?? items.length),
+      limit: raw?.limit ?? (params.limit || items.length),
+      offset: raw?.offset ?? (params.offset || 0),
+    };
   },
 
   async createTransaction(payload: CreateTransactionPayload): Promise<Transaction> {
@@ -58,9 +71,23 @@ export const transactionsApi = {
     const formData = new FormData();
     formData.append("file", file);
 
-    return apiClient<CSVImportResult>("/transactions/import-csv", {
+    const res = await apiClient<any>("/transactions/import-csv", {
       method: "POST",
       body: formData,
     });
+
+    const errorStrings: string[] = Array.isArray(res?.errors)
+      ? res.errors.map((e: any) =>
+          typeof e === "string" ? e : `Row ${e?.row ?? "?"}: ${e?.reason ?? "Unknown error"}`
+        )
+      : [];
+
+    return {
+      total_rows: res?.total_rows ?? 0,
+      imported_count: res?.imported ?? res?.imported_count ?? 0,
+      duplicate_count: res?.duplicates_skipped ?? res?.duplicate_count ?? 0,
+      skipped_count: res?.rejected ?? res?.skipped_count ?? 0,
+      errors: errorStrings,
+    };
   },
 };
