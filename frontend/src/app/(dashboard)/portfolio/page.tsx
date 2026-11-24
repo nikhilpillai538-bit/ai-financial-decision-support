@@ -135,15 +135,23 @@ export default function PortfolioPage() {
 
   const loadPortfolioDetails = async (portId: string) => {
     try {
-      const [portDetail, valRes, allocRes] = await Promise.allSettled([
+      const [holdingsRes, portDetail, valRes, allocRes] = await Promise.allSettled([
+        portfolioApi.listHoldings(portId),
         portfolioApi.getPortfolio(portId),
         portfolioApi.getPortfolioValuation(portId),
         portfolioApi.getPortfolioAllocation(portId),
       ]);
 
-      if (portDetail.status === "fulfilled") {
-        setHoldings(portDetail.value?.holdings || []);
+      let loadedHoldings: Holding[] = [];
+      if (holdingsRes.status === "fulfilled" && Array.isArray(holdingsRes.value) && holdingsRes.value.length > 0) {
+        loadedHoldings = holdingsRes.value;
+      } else if (portDetail.status === "fulfilled" && Array.isArray(portDetail.value?.holdings) && portDetail.value.holdings.length > 0) {
+        loadedHoldings = portDetail.value.holdings;
+      } else if (holdingsRes.status === "fulfilled" && Array.isArray(holdingsRes.value)) {
+        loadedHoldings = holdingsRes.value;
       }
+      setHoldings(loadedHoldings);
+
       if (valRes.status === "fulfilled") {
         setValuation(valRes.value);
       }
@@ -224,7 +232,7 @@ export default function PortfolioPage() {
         asset_id: holdingAssetId,
         quantity: holdingQty,
         average_purchase_price: holdingBuyPrice,
-        current_price: holdingCurrPrice || null,
+        current_price: holdingCurrPrice?.trim() ? holdingCurrPrice.trim() : null,
       });
       setIsAddHoldingOpen(false);
       setHoldingQty("");
@@ -255,11 +263,17 @@ export default function PortfolioPage() {
   }
 
   const allocationChartData =
-    allocation?.allocations?.map((a) => ({
-      name: a.asset_class,
-      asset_class: a.asset_class,
-      value: parseFloat(a.actual_weight) * 100,
-    })) || [];
+    allocation?.allocations && allocation.allocations.length > 0
+      ? allocation.allocations.map((a) => ({
+          name: a.asset_class,
+          asset_class: a.asset_class,
+          value: parseFloat(a.actual_weight) * 100,
+        }))
+      : (valuation as any)?.asset_class_breakdown?.map((b: any) => ({
+          name: b.asset_class,
+          asset_class: b.asset_class,
+          value: parseFloat(b.allocation_percentage) || 0,
+        })) || [];
 
   return (
     <div className="space-y-8">
@@ -523,26 +537,30 @@ export default function PortfolioPage() {
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {holdings.map((h) => {
                     const asset = h.asset || assets.find((a) => a.id === h.asset_id);
+                    const symbol = asset?.symbol || (h as any).asset_symbol;
+                    const name = asset?.name || (h as any).asset_name || symbol || "Asset";
+                    const assetClass = asset?.asset_class || (h as any).asset_class || "—";
+                    const curr = asset?.currency || (h as any).currency || "INR";
                     return (
                       <tr key={h.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
                         <td className="py-3 px-4">
                           <div className="font-semibold text-slate-900 dark:text-slate-100">
-                            {asset?.symbol || asset?.name || "Asset"}
+                            {symbol || name}
                           </div>
                           <div className="text-[10px] text-slate-400 truncate max-w-xs">
-                            {asset?.name}
+                            {name}
                           </div>
                         </td>
                         <td className="py-3 px-4">
-                          <Badge variant="outline">{asset?.asset_class || "—"}</Badge>
+                          <Badge variant="outline">{assetClass}</Badge>
                         </td>
                         <td className="py-3 px-4 text-right font-medium">{h.quantity}</td>
                         <td className="py-3 px-4 text-right text-slate-600">
-                          {formatCurrency(h.average_purchase_price, asset?.currency || "INR")}
+                          {formatCurrency(h.average_purchase_price, curr)}
                         </td>
                         <td className="py-3 px-4 text-right font-semibold">
                           {h.current_price
-                            ? formatCurrency(h.current_price, asset?.currency || "INR")
+                            ? formatCurrency(h.current_price, curr)
                             : <span className="text-amber-500 font-normal">Unpriced</span>}
                         </td>
                         <td className="py-3 px-4 text-right">

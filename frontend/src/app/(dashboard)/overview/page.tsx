@@ -72,12 +72,20 @@ export default function OverviewPage() {
             portfolioApi.getPortfolioAllocation(primaryPort.id),
           ]);
           if (valRes.status === "fulfilled") setValuation(valRes.value);
-          if (allocRes.status === "fulfilled" && allocRes.value.allocations) {
+          if (allocRes.status === "fulfilled" && allocRes.value.allocations && allocRes.value.allocations.length > 0) {
             setAllocationData(
               allocRes.value.allocations.map((a) => ({
                 name: a.asset_class,
                 asset_class: a.asset_class,
                 value: parseFloat(a.actual_weight) * 100,
+              }))
+            );
+          } else if (valRes.status === "fulfilled" && (valRes.value as any)?.asset_class_breakdown) {
+            setAllocationData(
+              (valRes.value as any).asset_class_breakdown.map((b: any) => ({
+                name: b.asset_class,
+                asset_class: b.asset_class,
+                value: parseFloat(b.allocation_percentage) || 0,
               }))
             );
           }

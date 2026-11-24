@@ -139,10 +139,16 @@ export interface Holding {
   portfolio_id: string;
   asset_id: string;
   asset?: Asset;
+  asset_name?: string;
+  asset_symbol?: string | null;
+  asset_class?: string;
+  currency?: string;
   quantity: string;
   average_purchase_price: string;
   current_price: string | null;
   current_value?: string | null;
+  cost_basis?: string | number;
+  market_value?: string | number | null;
 }
 
 export interface Portfolio {

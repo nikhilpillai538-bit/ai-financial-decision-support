@@ -142,84 +142,6 @@ class PortfolioUpdate(BaseModel):
         return v.strip().upper() if v is not None else None
 
 
-class PortfolioResponse(BaseModel):
-    """Schema for portfolio response."""
-
-    id: str
-    user_id: str
-    name: str
-    description: Optional[str] = None
-    base_currency: str
-    holding_count: int = 0
-    created_at: datetime
-    updated_at: datetime
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-# ---------------------------------------------------------------------------
-# Portfolio Holding Schemas
-# ---------------------------------------------------------------------------
-
-class HoldingCreate(BaseModel):
-    """Schema for adding a holding to a portfolio."""
-
-    asset_id: str = Field(..., description="ID of the asset instrument.")
-    quantity: Decimal = Field(..., gt=0, description="Quantity of units/shares (must be > 0).")
-    average_purchase_price: Decimal = Field(..., ge=0, description="Weighted average acquisition price per unit (>= 0).")
-    current_price: Optional[Decimal] = Field(None, ge=0, description="Latest user-supplied price per unit. Omit if unpriced.")
-    price_as_of: Optional[datetime] = Field(None, description="Timestamp for user-supplied price.")
-    notes: Optional[str] = None
-
-    @field_validator("quantity")
-    @classmethod
-    def quantize_qty(cls, v: Decimal) -> Decimal:
-        return quantize_decimal(v, places=4)
-
-    @field_validator("average_purchase_price")
-    @classmethod
-    def quantize_purchase_price(cls, v: Decimal) -> Decimal:
-        return quantize_decimal(v, places=2)
-
-    @field_validator("current_price")
-    @classmethod
-    def quantize_current_price(cls, v: Optional[Decimal]) -> Optional[Decimal]:
-        if v is not None:
-            return quantize_decimal(v, places=2)
-        return None
-
-
-class HoldingUpdate(BaseModel):
-    """Schema for updating an existing holding."""
-
-    quantity: Optional[Decimal] = Field(None, gt=0)
-    average_purchase_price: Optional[Decimal] = Field(None, ge=0)
-    current_price: Optional[Decimal] = Field(None, ge=0)
-    price_as_of: Optional[datetime] = None
-    notes: Optional[str] = None
-
-    @field_validator("quantity")
-    @classmethod
-    def quantize_qty(cls, v: Optional[Decimal]) -> Optional[Decimal]:
-        if v is not None:
-            return quantize_decimal(v, places=4)
-        return None
-
-    @field_validator("average_purchase_price")
-    @classmethod
-    def quantize_purchase_price(cls, v: Optional[Decimal]) -> Optional[Decimal]:
-        if v is not None:
-            return quantize_decimal(v, places=2)
-        return None
-
-    @field_validator("current_price")
-    @classmethod
-    def quantize_current_price(cls, v: Optional[Decimal]) -> Optional[Decimal]:
-        if v is not None:
-            return quantize_decimal(v, places=2)
-        return None
-
-
 class HoldingResponse(BaseModel):
     """Schema for a holding response with instrument context."""
 
@@ -237,6 +159,22 @@ class HoldingResponse(BaseModel):
     cost_basis: Decimal
     market_value: Optional[Decimal] = None
     notes: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class PortfolioResponse(BaseModel):
+    """Schema for portfolio response."""
+
+    id: str
+    user_id: str
+    name: str
+    description: Optional[str] = None
+    base_currency: str
+    holding_count: int = 0
+    holdings: Optional[List[HoldingResponse]] = None
     created_at: datetime
     updated_at: datetime
 

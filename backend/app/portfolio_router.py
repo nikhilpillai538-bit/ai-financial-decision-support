@@ -221,6 +221,7 @@ def get_portfolio(
         description=portfolio.description,
         base_currency=portfolio.base_currency,
         holding_count=len(portfolio.holdings) if portfolio.holdings else 0,
+        holdings=[_to_holding_response(h) for h in portfolio.holdings] if portfolio.holdings else [],
         created_at=portfolio.created_at,
         updated_at=portfolio.updated_at,
     )
@@ -256,6 +257,7 @@ def update_portfolio(
         description=portfolio.description,
         base_currency=portfolio.base_currency,
         holding_count=len(portfolio.holdings) if portfolio.holdings else 0,
+        holdings=[_to_holding_response(h) for h in portfolio.holdings] if portfolio.holdings else [],
         created_at=portfolio.created_at,
         updated_at=portfolio.updated_at,
     )
@@ -720,6 +722,19 @@ def get_allocation_analysis(
         )
     target_alloc = repo.get_target_allocation(portfolio_id, user_id=current_user.id)
     return calculate_allocation_analysis(portfolio, target_alloc)
+
+
+@portfolio_router.get(
+    "/portfolios/{portfolio_id}/allocation",
+    response_model=AllocationAnalysisResponse,
+    summary="Alias for /portfolios/{portfolio_id}/allocation-analysis",
+)
+def get_allocation_alias(
+    portfolio_id: str,
+    current_user: UserModel = Depends(get_current_user),
+    repo: SQLPortfolioRepository = Depends(get_portfolio_repo),
+) -> AllocationAnalysisResponse:
+    return get_allocation_analysis(portfolio_id, current_user, repo)
 
 
 @portfolio_router.get(
