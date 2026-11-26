@@ -278,44 +278,44 @@ export default function PortfolioPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#1A263D]">
         <div>
-          <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
             Portfolio Management & Assets
           </h1>
-          <p className="text-base text-slate-500 dark:text-slate-400 mt-1.5 font-medium">
-            Holdings, asset allocation analysis, and deterministic valuation
+          <p className="text-xs sm:text-sm text-slate-400 mt-1 font-medium">
+            Active holdings, multi-asset allocation analysis, and live valuation.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 flex-wrap">
           <Button
             variant="outline"
-            size="md"
+            size="sm"
             disabled={!selectedPortfolioId || isSyncingPrices}
             onClick={handleSyncLivePrices}
             isLoading={isSyncingPrices}
-            className="gap-2 shadow-xs text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800 hover:bg-indigo-50"
+            className="gap-1.5 border-[#202D45] text-slate-300 hover:text-white"
           >
-            <Zap className="w-4 h-4 text-amber-500" />
+            <Zap className="w-3.5 h-3.5 text-amber-400" />
             <span>Sync Live Prices</span>
           </Button>
           <Button
-            variant="outline"
-            size="md"
+            variant="secondary"
+            size="sm"
             onClick={() => setIsCreatePortOpen(true)}
-            className="gap-2 shadow-xs"
+            className="gap-1.5"
           >
-            <Briefcase className="w-4 h-4" />
+            <Briefcase className="w-3.5 h-3.5 text-cyan-400" />
             <span>New Portfolio</span>
           </Button>
           <Button
             variant="primary"
-            size="md"
+            size="sm"
             disabled={!selectedPortfolioId}
             onClick={() => setIsAddHoldingOpen(true)}
-            className="gap-2 shadow-md shadow-indigo-600/20"
+            className="gap-1.5 shadow-md shadow-cyan-950/40"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-3.5 h-3.5" />
             <span>Add Position</span>
           </Button>
         </div>
@@ -324,14 +324,14 @@ export default function PortfolioPage() {
       {error && <ErrorBanner message={error} onRetry={fetchInitialData} />}
 
       {syncNotification && (
-        <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 text-sm flex items-center justify-between gap-3 shadow-xs">
+        <div className="p-3.5 rounded-xl border border-emerald-800/80 bg-emerald-950/50 text-emerald-200 text-xs sm:text-sm flex items-center justify-between gap-3 shadow-xs animate-fade-in">
           <div className="flex items-center gap-2.5 font-medium">
-            <Zap className="w-4 h-4 text-emerald-600 shrink-0" />
+            <Zap className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>{syncNotification}</span>
           </div>
           <button
             onClick={() => setSyncNotification(null)}
-            className="text-xs font-bold text-emerald-700 hover:text-emerald-900 px-2 py-1 rounded-md bg-emerald-100/50"
+            className="text-xs font-bold text-emerald-300 hover:text-white px-2 py-1 rounded-md bg-emerald-900/50"
           >
             Dismiss
           </button>
@@ -340,15 +340,15 @@ export default function PortfolioPage() {
 
       {/* Portfolio Selector Tabs */}
       {portfolios.length > 1 && (
-        <div className="flex items-center gap-2.5 overflow-x-auto pb-1">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1">
           {portfolios.map((p) => (
             <button
               key={p.id}
               onClick={() => handleSelectPortfolio(p.id)}
-              className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all shrink-0 ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 ${
                 selectedPortfolioId === p.id
-                  ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/20"
-                  : "bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50"
+                  ? "bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 shadow-md shadow-cyan-950/30"
+                  : "bg-[#111827] text-slate-300 border border-[#202D45] hover:bg-[#162134] hover:text-white"
               }`}
             >
               {p.name} ({p.base_currency})
@@ -359,11 +359,11 @@ export default function PortfolioPage() {
 
       {/* Unpriced Holdings Alert */}
       {valuation && valuation.unpriced_holdings_count > 0 && (
-        <div className="p-4 rounded-xl border border-amber-200 bg-amber-50 text-amber-900 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+        <div className="p-3.5 sm:p-4 rounded-xl border border-amber-800/70 bg-amber-950/40 text-amber-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
           <div className="flex items-center gap-2.5">
-            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
-            <span className="font-medium">
-              {valuation.unpriced_holdings_count} position(s) have unrecorded market prices. Total valuation reflects only positions with known current prices.
+            <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+            <span className="font-medium leading-relaxed">
+              {valuation.unpriced_holdings_count} position(s) currently unpriced in market quotes. Valuations compute known price feeds.
             </span>
           </div>
           <Button
@@ -371,10 +371,10 @@ export default function PortfolioPage() {
             size="sm"
             onClick={handleSyncLivePrices}
             isLoading={isSyncingPrices}
-            className="bg-white text-amber-900 border-amber-300 hover:bg-amber-100 gap-1.5 shrink-0 self-start sm:self-auto"
+            className="border-amber-800/80 text-amber-300 hover:text-white hover:bg-amber-900/40 gap-1.5 shrink-0 self-start sm:self-auto"
           >
-            <Zap className="w-3.5 h-3.5 text-amber-600" />
-            <span>Fetch from Yahoo Finance</span>
+            <Zap className="w-3.5 h-3.5 text-amber-400" />
+            <span>Fetch Yahoo Quotes</span>
           </Button>
         </div>
       )}
@@ -385,15 +385,15 @@ export default function PortfolioPage() {
           title="Total Portfolio Value"
           value={formatCurrency(valuation?.total_value, valuation?.currency || "INR")}
           subtitle={`Valued as of ${formatDate(valuation?.valued_at)}`}
-          icon={<DollarSign className="w-5 h-5" />}
+          icon={<DollarSign className="w-5 h-5 text-cyan-400" />}
           variant="brand"
         />
 
         <MetricCard
           title="Cost Basis (Invested)"
           value={formatCurrency(valuation?.cost_basis, valuation?.currency || "INR")}
-          subtitle="Total acquisition cost across holdings"
-          icon={<Briefcase className="w-5 h-5" />}
+          subtitle="Total acquisition cost across positions"
+          icon={<Briefcase className="w-5 h-5 text-slate-300" />}
           variant="default"
         />
 
@@ -407,15 +407,15 @@ export default function PortfolioPage() {
               ? `Return: ${formatPercentage(valuation.unrealized_gain_loss_percentage, { showPlusSign: true })}`
               : "—"
           }
-          icon={<TrendingUp className="w-5 h-5" />}
+          icon={<TrendingUp className="w-5 h-5 text-emerald-400" />}
           variant={parseFloat(valuation?.unrealized_gain_loss || "0") >= 0 ? "success" : "danger"}
         />
 
         <MetricCard
           title="Max Allocation Drift"
           value={allocation?.max_drift ? formatPercentage(parseFloat(allocation.max_drift) * 100) : "0.00%"}
-          subtitle={allocation?.has_target ? "Measured against target asset weights" : "No target allocation configured"}
-          icon={<PieChart className="w-5 h-5" />}
+          subtitle={allocation?.has_target ? "Measured against policy target" : "No target allocation configured"}
+          icon={<PieChart className="w-5 h-5 text-teal-400" />}
           variant="default"
         />
       </div>
@@ -428,7 +428,7 @@ export default function PortfolioPage() {
             <CardDescription>Weights across equity, debt, cash, and commodities</CardDescription>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col justify-center">
-            <AllocationDonutChart data={allocationChartData} height={240} />
+            <AllocationDonutChart data={allocationChartData} height={260} />
           </CardContent>
         </Card>
 
@@ -445,7 +445,7 @@ export default function PortfolioPage() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-left">
-                  <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 uppercase font-semibold">
+                  <thead className="bg-[#0C121F] text-slate-400 uppercase tracking-wider text-[11px] font-bold border-y border-[#1C273C]">
                     <tr>
                       <th className="py-2.5 px-3">Asset Class</th>
                       <th className="py-2.5 px-3 text-right">Actual Weight</th>
@@ -454,19 +454,19 @@ export default function PortfolioPage() {
                       <th className="py-2.5 px-3 text-center">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  <tbody className="divide-y divide-[#1C273C]">
                     {allocation.allocations.map((a, idx) => (
-                      <tr key={idx} className="hover:bg-slate-50/50">
-                        <td className="py-2.5 px-3 font-medium capitalize text-slate-900 dark:text-slate-100">
+                      <tr key={idx} className="hover:bg-[#141C2C]/50 transition-colors">
+                        <td className="py-2.5 px-3 font-semibold capitalize text-white">
                           {a.asset_class.replace("_", " ")}
                         </td>
-                        <td className="py-2.5 px-3 text-right font-semibold">
+                        <td className="py-2.5 px-3 text-right font-semibold font-mono text-cyan-300">
                           {formatPercentage(parseFloat(a.actual_weight) * 100)}
                         </td>
-                        <td className="py-2.5 px-3 text-right text-slate-500">
+                        <td className="py-2.5 px-3 text-right text-slate-400 font-mono">
                           {formatPercentage(parseFloat(a.target_weight) * 100)}
                         </td>
-                        <td className="py-2.5 px-3 text-right font-semibold text-slate-700">
+                        <td className="py-2.5 px-3 text-right font-semibold font-mono text-slate-200">
                           {formatPercentage(parseFloat(a.variance) * 100, { showPlusSign: true })}
                         </td>
                         <td className="py-2.5 px-3 text-center">
@@ -524,7 +524,7 @@ export default function PortfolioPage() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left">
-                <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 uppercase tracking-wider font-semibold border-y border-slate-100 dark:border-slate-800">
+                <thead className="bg-[#0C121F] text-slate-400 uppercase tracking-wider text-[11px] font-bold border-y border-[#1C273C]">
                   <tr>
                     <th className="py-3 px-4">Instrument</th>
                     <th className="py-3 px-4">Asset Class</th>
@@ -534,7 +534,7 @@ export default function PortfolioPage() {
                     <th className="py-3 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                <tbody className="divide-y divide-[#1C273C]">
                   {holdings.map((h) => {
                     const asset = h.asset || assets.find((a) => a.id === h.asset_id);
                     const symbol = asset?.symbol || (h as any).asset_symbol;
@@ -542,9 +542,9 @@ export default function PortfolioPage() {
                     const assetClass = asset?.asset_class || (h as any).asset_class || "—";
                     const curr = asset?.currency || (h as any).currency || "INR";
                     return (
-                      <tr key={h.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+                      <tr key={h.id} className="hover:bg-[#141C2C]/50 transition-colors">
                         <td className="py-3 px-4">
-                          <div className="font-semibold text-slate-900 dark:text-slate-100">
+                          <div className="font-semibold text-white">
                             {symbol || name}
                           </div>
                           <div className="text-[10px] text-slate-400 truncate max-w-xs">
@@ -554,19 +554,19 @@ export default function PortfolioPage() {
                         <td className="py-3 px-4">
                           <Badge variant="outline">{assetClass}</Badge>
                         </td>
-                        <td className="py-3 px-4 text-right font-medium">{h.quantity}</td>
-                        <td className="py-3 px-4 text-right text-slate-600">
+                        <td className="py-3 px-4 text-right font-medium font-mono text-slate-200">{h.quantity}</td>
+                        <td className="py-3 px-4 text-right text-slate-300 font-mono">
                           {formatCurrency(h.average_purchase_price, curr)}
                         </td>
-                        <td className="py-3 px-4 text-right font-semibold">
+                        <td className="py-3 px-4 text-right font-semibold font-mono text-cyan-300">
                           {h.current_price
                             ? formatCurrency(h.current_price, curr)
-                            : <span className="text-amber-500 font-normal">Unpriced</span>}
+                            : <span className="text-amber-400 font-normal">Unpriced</span>}
                         </td>
                         <td className="py-3 px-4 text-right">
                           <button
                             onClick={() => handleDeleteHolding(h.id)}
-                            className="text-slate-400 hover:text-rose-600 p-1 transition-colors"
+                            className="text-slate-400 hover:text-rose-400 p-1 transition-colors"
                             title="Remove position"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -592,7 +592,7 @@ export default function PortfolioPage() {
         <form onSubmit={handleAddHolding} className="space-y-4">
           <div>
             <div className="flex justify-between items-center mb-1.5">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
                 Asset Instrument
               </label>
               <button
@@ -601,7 +601,7 @@ export default function PortfolioPage() {
                   setIsAddHoldingOpen(false);
                   setIsCreateAssetOpen(true);
                 }}
-                className="text-[11px] text-indigo-600 font-medium hover:underline"
+                className="text-[11px] text-cyan-400 font-bold hover:underline"
               >
                 + Create Custom Instrument
               </button>
@@ -609,21 +609,21 @@ export default function PortfolioPage() {
             <select
               value={holdingAssetId}
               onChange={(e) => setHoldingAssetId(e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100"
+              className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-[#0E1524] border border-[#202D45] rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-400"
               required
             >
-              <option value="">Select an asset...</option>
+              <option value="" className="bg-[#0E1524] text-slate-400">Select an asset...</option>
               {assets.map((a) => (
-                <option key={a.id} value={a.id}>
+                <option key={a.id} value={a.id} className="bg-[#0E1524] text-white">
                   {a.symbol ? `${a.symbol} — ` : ""}{a.name} ({a.asset_class})
                 </option>
               ))}
             </select>
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <Input
-              label="Quantity (Shares/Units)"
+              label="Quantity"
               type="number"
               step="0.0001"
               min="0.0001"
@@ -644,8 +644,8 @@ export default function PortfolioPage() {
             />
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  Current Market Price
+                <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                  Current Price
                 </label>
                 {holdingAssetId && assets.find((a) => a.id === holdingAssetId)?.symbol && (
                   <button
@@ -655,9 +655,9 @@ export default function PortfolioPage() {
                       if (sym) handleLookupQuote(sym);
                     }}
                     disabled={isLookingUpQuote}
-                    className="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
+                    className="text-[11px] font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
                   >
-                    <Zap className="w-3 h-3 text-amber-500" />
+                    <Zap className="w-3 h-3 text-amber-400" />
                     <span>{isLookingUpQuote ? "Fetching..." : "Live Price"}</span>
                   </button>
                 )}

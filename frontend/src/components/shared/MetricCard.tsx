@@ -7,7 +7,7 @@ export interface MetricCardProps {
   value: React.ReactNode;
   subtitle?: string;
   icon?: React.ReactNode;
-  variant?: "default" | "success" | "danger" | "warning" | "brand";
+  variant?: "default" | "success" | "danger" | "warning" | "brand" | "cyan";
   trend?: {
     value: string;
     isPositive?: boolean;
@@ -25,50 +25,67 @@ export function MetricCard({
   trend,
   className,
 }: MetricCardProps) {
-  const iconBg = {
-    default: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
-    success: "bg-emerald-50 text-emerald-600 border border-emerald-100 dark:bg-emerald-950/50 dark:text-emerald-400",
-    danger: "bg-rose-50 text-rose-600 border border-rose-100 dark:bg-rose-950/50 dark:text-rose-400",
-    warning: "bg-amber-50 text-amber-600 border border-amber-100 dark:bg-amber-950/50 dark:text-amber-400",
-    brand: "bg-indigo-50 text-indigo-600 border border-indigo-100 dark:bg-indigo-950/50 dark:text-indigo-400",
+  const iconBg: Record<string, string> = {
+    default: "bg-[#182336] text-slate-300 border border-[#273855]",
+    success: "bg-emerald-950/60 text-emerald-400 border border-emerald-800/70",
+    danger: "bg-rose-950/60 text-rose-400 border border-rose-800/70",
+    warning: "bg-amber-950/60 text-amber-400 border border-amber-800/70",
+    brand: "bg-cyan-950/60 text-cyan-400 border border-cyan-800/70",
+    cyan: "bg-cyan-950/60 text-cyan-400 border border-cyan-800/70",
+  };
+
+  const topBorderGlow: Record<string, string> = {
+    default: "before:bg-slate-700",
+    success: "before:bg-emerald-500",
+    danger: "before:bg-rose-500",
+    warning: "before:bg-amber-500",
+    brand: "before:bg-gradient-to-r before:from-cyan-400 before:to-teal-400",
+    cyan: "before:bg-gradient-to-r before:from-cyan-400 before:to-teal-400",
   };
 
   return (
-    <Card className={cn("transition-all duration-200 hover:shadow-fintech hover:-translate-y-0.5", className)}>
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between gap-4">
+    <Card
+      className={cn(
+        "relative transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 overflow-hidden",
+        "before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-[2px]",
+        topBorderGlow[variant],
+        className
+      )}
+    >
+      <CardContent className="p-5 sm:p-6">
+        <div className="flex items-start justify-between gap-3">
           <div className="space-y-1.5 flex-1 min-w-0">
-            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 tracking-wider uppercase">
+            <p className="text-[11px] font-bold text-slate-400 tracking-wider uppercase">
               {title}
             </p>
-            <div className="text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 truncate">
+            <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white truncate">
               {value}
             </div>
           </div>
           {icon && (
-            <div className={cn("p-3.5 rounded-2xl flex items-center justify-center shrink-0 shadow-xs", iconBg[variant])}>
+            <div className={cn("p-2.5 sm:p-3 rounded-xl flex items-center justify-center shrink-0 shadow-sm", iconBg[variant])}>
               {icon}
             </div>
           )}
         </div>
 
         {(subtitle || trend) && (
-          <div className="mt-4 flex items-center text-sm text-slate-600 dark:text-slate-400 gap-2 flex-wrap">
+          <div className="mt-3.5 pt-3 border-t border-[#1C273C] flex items-center text-xs text-slate-400 gap-2 flex-wrap">
             {trend && (
               <span
                 className={cn(
-                  "font-bold px-2 py-0.5 rounded-full text-xs inline-flex items-center",
+                  "font-bold px-2 py-0.5 rounded-md text-[10px] inline-flex items-center",
                   trend.isPositive
-                    ? "text-emerald-700 bg-emerald-50 border border-emerald-200 dark:text-emerald-400 dark:bg-emerald-950/50"
-                    : "text-rose-700 bg-rose-50 border border-rose-200 dark:text-rose-400 dark:bg-rose-950/50"
+                    ? "text-emerald-300 bg-emerald-950/60 border border-emerald-800/60"
+                    : "text-rose-300 bg-rose-950/60 border border-rose-800/60"
                 )}
               >
                 {trend.value}
               </span>
             )}
-            {trend?.label && <span className="font-medium text-slate-500">{trend.label}</span>}
-            {trend && subtitle && <span className="text-slate-300">•</span>}
-            {subtitle && <span className="font-normal text-slate-500">{subtitle}</span>}
+            {trend?.label && <span className="font-medium text-slate-400">{trend.label}</span>}
+            {trend && subtitle && <span className="text-slate-600">•</span>}
+            {subtitle && <span className="font-normal text-slate-400 truncate">{subtitle}</span>}
           </div>
         )}
       </CardContent>

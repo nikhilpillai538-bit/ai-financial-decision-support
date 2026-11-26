@@ -18,72 +18,73 @@ export function SentimentDistributionChart({
 }) {
   if (total === 0) {
     return (
-      <div className="text-center py-6 text-xs text-slate-400">
-        No sentiment data available for this window.
+      <div className="flex flex-col items-center justify-center py-6 text-xs text-slate-400 border border-dashed border-[#202D45] rounded-xl bg-[#0D1422]/40 p-4">
+        <span className="font-semibold text-slate-300 mb-1">No FinBERT Sentiment Ingested</span>
+        <span className="text-[11px] text-slate-400">Fetch live RSS feeds on Market News to score articles</span>
       </div>
     );
   }
 
   const labelColors = {
-    bullish: "text-emerald-700 bg-emerald-50 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800",
-    bearish: "text-rose-700 bg-rose-50 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800",
-    neutral: "text-slate-700 bg-slate-50 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700",
+    bullish: "text-emerald-300 bg-emerald-950/60 border-emerald-800/80",
+    bearish: "text-rose-300 bg-rose-950/60 border-rose-800/80",
+    neutral: "text-slate-300 bg-slate-800/60 border-slate-700/80",
   };
 
   const badgeColor =
     labelColors[overallLabel.toLowerCase() as keyof typeof labelColors] || labelColors.neutral;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3.5">
       <div className="flex items-center justify-between">
-        <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          Market Stance:
+        <span className="text-xs text-slate-400 font-medium">
+          Market FinBERT Stance:
         </span>
         <span
-          className={`text-xs px-2.5 py-0.5 rounded-full font-semibold uppercase tracking-wide border ${badgeColor}`}
+          className={`text-[11px] px-3 py-0.5 rounded-full font-bold uppercase tracking-wider border ${badgeColor}`}
         >
           {overallLabel}
         </span>
       </div>
 
       {/* Segmented Bar */}
-      <div className="h-3 w-full rounded-full overflow-hidden flex bg-slate-100 dark:bg-slate-800">
+      <div className="h-3.5 w-full rounded-full overflow-hidden flex bg-[#0A0E18] p-0.5 border border-[#1E2C44]">
         {positive > 0 && (
           <div
             style={{ width: `${positive}%` }}
-            className="bg-emerald-500 h-full transition-all"
+            className="bg-emerald-500 h-full rounded-l-full transition-all"
             title={`Positive: ${positive}%`}
           />
         )}
         {neutral > 0 && (
           <div
             style={{ width: `${neutral}%` }}
-            className="bg-slate-400 h-full transition-all"
+            className="bg-slate-500 h-full transition-all"
             title={`Neutral: ${neutral}%`}
           />
         )}
         {negative > 0 && (
           <div
             style={{ width: `${negative}%` }}
-            className="bg-rose-500 h-full transition-all"
+            className="bg-rose-500 h-full rounded-r-full transition-all"
             title={`Negative: ${negative}%`}
           />
         )}
       </div>
 
       {/* Legend & Percentages */}
-      <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 pt-1">
+      <div className="flex items-center justify-between text-xs text-slate-300 pt-1 flex-wrap gap-2">
         <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" />
-          <span>Positive: {formatPercentage(positive)}</span>
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block shadow-xs" />
+          <span className="font-medium">Positive: {formatPercentage(positive)}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-slate-400 inline-block" />
-          <span>Neutral: {formatPercentage(neutral)}</span>
+          <span className="w-2.5 h-2.5 rounded-full bg-slate-400 inline-block shadow-xs" />
+          <span className="font-medium">Neutral: {formatPercentage(neutral)}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block" />
-          <span>Negative: {formatPercentage(negative)}</span>
+          <span className="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block shadow-xs" />
+          <span className="font-medium">Negative: {formatPercentage(negative)}</span>
         </div>
       </div>
     </div>

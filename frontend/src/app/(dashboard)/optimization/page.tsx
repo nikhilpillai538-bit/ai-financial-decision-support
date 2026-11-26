@@ -47,6 +47,7 @@ import {
   Zap,
   Sparkles,
   CheckCircle2,
+  Database,
 } from "lucide-react";
 
 export default function OptimizationPage() {
@@ -320,22 +321,27 @@ export default function OptimizationPage() {
   );
 
   if (isLoadingPortfolios) {
-    return <LoadingState message="Loading portfolio optimization engine..." />;
+    return <LoadingState message="Loading Modern Portfolio Theory optimization solver..." />;
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fadeIn">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#202D45] pb-6">
         <div>
-          <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900">
-            Portfolio Optimization & MPT Engine
-          </h1>
-          <p className="text-base text-slate-500 mt-1.5 font-medium">
-            Deterministic Modern Portfolio Theory solver, risk-adjusted returns, and drift analysis.
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+              Portfolio Optimization & MPT Engine
+            </h1>
+            <Badge variant="cyan" className="font-mono text-[10px] uppercase tracking-wider">
+              Tangency Solver
+            </Badge>
+          </div>
+          <p className="text-sm text-slate-400 mt-1.5 font-normal">
+            Deterministic Modern Portfolio Theory solver, Sharpe tangency frontier, and asset allocation drift analyzer.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           <Button
             variant="primary"
             size="md"
@@ -343,9 +349,9 @@ export default function OptimizationPage() {
               setModalTab("yfinance");
               setShowUploadModal(true);
             }}
-            className="gap-2 shadow-md shadow-indigo-600/20"
+            className="gap-2"
           >
-            <Zap className="w-4 h-4 text-amber-300" />
+            <Zap className="w-4 h-4 text-cyan-200" />
             <span>Fetch Market Data</span>
           </Button>
           <Button
@@ -363,41 +369,47 @@ export default function OptimizationPage() {
       {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
 
       {/* Market Data Status Strip */}
-      <Card className="bg-slate-50/80 border-dashed border-slate-300">
-        <div className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 text-sm font-medium">
-          <div className="flex items-center gap-3">
-            <span className="font-semibold text-slate-700">Market Data Store:</span>
+      <div className="p-4 rounded-xl bg-[#0E1524] border border-[#202D45] flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-cyan-950/60 border border-cyan-500/20 flex items-center justify-center shrink-0">
+            <Database className="w-4 h-4 text-cyan-400" />
+          </div>
+          <div>
+            <span className="font-semibold text-white block">Market Data Store</span>
             {marketData ? (
-              <span className="text-slate-600">
-                <span className="font-medium text-slate-900">{marketData.symbols_count || 0}</span> symbols indexed (
-                <span className="font-medium text-slate-900">{marketData.data_points_count || 0}</span> price observations)
+              <span className="text-slate-400">
+                <span className="font-mono font-bold text-cyan-300">{marketData.symbols_count || 0}</span> symbols indexed (
+                <span className="font-mono font-bold text-slate-200">{marketData.data_points_count || 0}</span> observations)
                 {marketData.date_range_start && (
-                  <span className="text-slate-500 ml-1">
-                    from {formatDate(marketData.date_range_start)} to {formatDate(marketData.date_range_end)}
+                  <span className="text-slate-400 ml-1">
+                    from <span className="font-mono text-slate-300">{formatDate(marketData.date_range_start)}</span> to <span className="font-mono text-slate-300">{formatDate(marketData.date_range_end)}</span>
                   </span>
                 )}
               </span>
             ) : (
-              <span className="text-amber-700 font-medium">
-                No historical prices loaded. Upload price series to calculate covariance matrices.
+              <span className="text-amber-400 font-medium">
+                No historical prices loaded. Fetch ticker history or upload CSV to calculate covariance matrices.
               </span>
             )}
           </div>
-          <div className="flex items-center gap-2 text-slate-500">
-            <span>Covariance Model: <strong className="text-slate-800">Ledoit-Wolf / Sample</strong></span>
-            <span>•</span>
-            <span>Risk-Free Benchmark: <strong className="text-slate-800">RBI 91D T-Bill ({(parseFloat(riskFreeRate || "0.06") * 100).toFixed(1)}%)</strong></span>
-          </div>
         </div>
-      </Card>
+        <div className="flex items-center gap-2 font-mono text-[11px] text-slate-400">
+          <span>Covariance: <strong className="text-slate-200">Sample Matrix</strong></span>
+          <span>•</span>
+          <span>Risk-Free Benchmark: <strong className="text-cyan-400">RBI 91D ({(parseFloat(riskFreeRate || "0.06") * 100).toFixed(1)}%)</strong></span>
+        </div>
+      </div>
 
       {/* Portfolio Selector & Optimization Config */}
       {portfolios.length === 0 ? (
         <EmptyState
           title="No Portfolios Available"
           description="Create a portfolio and add asset holdings before running Modern Portfolio Theory optimization."
-          actionLabel="Go to Portfolios"
-          onAction={() => (window.location.href = "/portfolio")}
+          action={
+            <Button variant="primary" size="sm" onClick={() => (window.location.href = "/portfolio")}>
+              Go to Portfolios
+            </Button>
+          }
         />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -405,24 +417,24 @@ export default function OptimizationPage() {
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Sliders className="w-4 h-4 text-indigo-600" />
+                <CardTitle className="text-base text-white flex items-center gap-2">
+                  <Sliders className="w-4 h-4 text-cyan-400" />
                   Optimization Parameters
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-xs text-slate-400">
                   Configure mathematical objective and allocation bounds.
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleRunOptimization} className="space-y-4">
+                <form onSubmit={handleRunOptimization} className="space-y-4 text-xs">
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">
+                    <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
                       Target Portfolio
                     </label>
                     <select
                       value={selectedPortfolioId}
                       onChange={(e) => setSelectedPortfolioId(e.target.value)}
-                      className="w-full text-sm rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full text-xs rounded-lg border border-[#202D45] bg-[#0E1524] px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-cyan-500 font-medium"
                     >
                       {portfolios.map((p) => (
                         <option key={p.id} value={p.id}>
@@ -433,15 +445,15 @@ export default function OptimizationPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">
+                    <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
                       Objective Function
                     </label>
                     <select
                       value={objective}
                       onChange={(e) => setObjective(e.target.value as any)}
-                      className="w-full text-sm rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full text-xs rounded-lg border border-[#202D45] bg-[#0E1524] px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-cyan-500 font-medium"
                     >
-                      <option value="max_sharpe">Maximize Sharpe Ratio (Tangency)</option>
+                      <option value="max_sharpe">Maximize Sharpe Ratio (Tangency Portfolio)</option>
                       <option value="min_volatility">Minimize Volatility (Global Minimum Variance)</option>
                       <option value="target_return">Target Expected Return</option>
                     </select>
@@ -493,6 +505,7 @@ export default function OptimizationPage() {
 
                   <Button
                     type="submit"
+                    variant="primary"
                     className="w-full"
                     isLoading={isOptimizing}
                     disabled={!selectedPortfolioId}
@@ -507,41 +520,45 @@ export default function OptimizationPage() {
             {/* Optimization Run History */}
             <Card>
               <CardHeader className="py-3">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <History className="w-4 h-4 text-slate-500" />
+                <CardTitle className="text-sm text-white flex items-center gap-2">
+                  <History className="w-4 h-4 text-slate-400" />
                   Past Optimizations
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 {history.length === 0 ? (
-                  <div className="p-4 text-xs text-slate-500 text-center">
+                  <div className="p-4 text-xs text-slate-400 text-center">
                     No previous optimization records for this portfolio.
                   </div>
                 ) : (
-                  <div className="divide-y divide-slate-100 max-h-64 overflow-y-auto">
+                  <div className="divide-y divide-[#202D45] max-h-64 overflow-y-auto">
                     {history.map((h: any, i: number) => {
                       const strat = String(h.strategy || h.objective || "Optimal Run").replace(/_/g, " ");
                       const expVol = h.expected_volatility ?? h.volatility;
                       const statusVal = h.solver_status || "optimal";
+                      const isSelected = optimizationResult === h;
                       return (
                         <button
                           key={h.id || i}
                           type="button"
                           onClick={() => setOptimizationResult(h)}
-                          className={`w-full text-left p-3 text-xs hover:bg-slate-50 flex items-center justify-between transition-colors ${
-                            optimizationResult === h ? "bg-indigo-50/50 font-medium" : ""
+                          className={`w-full text-left p-3 text-xs flex items-center justify-between transition-colors ${
+                            isSelected
+                              ? "bg-[#162032] border-l-2 border-cyan-400 font-medium"
+                              : "hover:bg-[#162032]/50 text-slate-300"
                           }`}
                         >
                           <div>
-                            <div className="font-semibold text-slate-800 capitalize">
+                            <div className="font-semibold text-white capitalize">
                               {strat}
                             </div>
-                            <div className="text-slate-500 mt-0.5">
+                            <div className="text-slate-400 text-[11px] font-mono mt-0.5">
                               Exp. Return: {formatPercentage(h.expected_return)} • Vol: {formatPercentage(expVol)}
                             </div>
                           </div>
                           <Badge
                             variant={statusVal === "optimal" ? "success" : "warning"}
+                            className="text-[10px]"
                           >
                             {statusVal}
                           </Badge>
@@ -563,14 +580,16 @@ export default function OptimizationPage() {
                   <MetricCard
                     title="Expected Annual Return"
                     value={formatPercentage(optimizationResult.expected_return)}
-                    icon={<TrendingUp className="w-4 h-4 text-emerald-600" />}
+                    icon={<TrendingUp className="w-4 h-4" />}
                     subtitle={`Annualized (${String(optimizationResult.strategy || optimizationResult.objective || "Optimal").replace(/_/g, " ")})`}
+                    variant="success"
                   />
                   <MetricCard
                     title="Annualized Volatility"
                     value={formatPercentage(optimizationResult.expected_volatility ?? optimizationResult.volatility)}
-                    icon={<Percent className="w-4 h-4 text-amber-600" />}
+                    icon={<Percent className="w-4 h-4" />}
                     subtitle="Standard deviation of returns"
+                    variant="warning"
                   />
                   <MetricCard
                     title="Sharpe Ratio"
@@ -579,8 +598,9 @@ export default function OptimizationPage() {
                         ? parseFloat(String(optimizationResult.sharpe_ratio)).toFixed(2)
                         : "—"
                     }
-                    icon={<Scale className="w-4 h-4 text-blue-600" />}
+                    icon={<Scale className="w-4 h-4" />}
                     subtitle={`Above Rf: ${(parseFloat(riskFreeRate || "0.06") * 100).toFixed(1)}%`}
+                    variant="cyan"
                   />
                 </div>
 
@@ -589,12 +609,12 @@ export default function OptimizationPage() {
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <div>
-                        <CardTitle className="text-base">Optimal Asset Allocation Weights</CardTitle>
-                        <CardDescription>
+                        <CardTitle className="text-base text-white">Optimal Asset Allocation Weights</CardTitle>
+                        <CardDescription className="text-xs text-slate-400">
                           Mathematically solved asset weights satisfying all objective constraints.
                         </CardDescription>
                       </div>
-                      <Badge variant={(optimizationResult.solver_status || "optimal") === "optimal" ? "success" : "info"}>
+                      <Badge variant={(optimizationResult.solver_status || "optimal") === "optimal" ? "success" : "cyan"}>
                         Status: {optimizationResult.solver_status || "Optimal"}
                       </Badge>
                     </div>
@@ -602,14 +622,14 @@ export default function OptimizationPage() {
                   <CardContent className="p-0">
                     <div className="overflow-x-auto">
                       <table className="w-full text-xs text-left">
-                        <thead className="bg-slate-50 text-slate-500 border-y border-slate-200">
+                        <thead className="bg-[#0A0F1D] text-slate-400 border-y border-[#202D45] uppercase tracking-wider font-semibold">
                           <tr>
-                            <th className="px-4 py-2 font-medium">Asset Symbol</th>
-                            <th className="px-4 py-2 font-medium text-right">Optimal Weight</th>
-                            <th className="px-4 py-2 font-medium text-right">Visual Share</th>
+                            <th className="px-4 py-2.5">Asset Symbol</th>
+                            <th className="px-4 py-2.5 text-right">Optimal Weight</th>
+                            <th className="px-4 py-2.5 text-right">Allocation Visual</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-[#202D45]">
                           {Object.keys(resolvedWeights).length === 0 ? (
                             <tr>
                               <td colSpan={3} className="px-4 py-4 text-center text-slate-400">
@@ -620,17 +640,17 @@ export default function OptimizationPage() {
                             Object.entries(resolvedWeights).map(([symbol, weight]) => {
                               const pct = weight * (Math.abs(weight) <= 1 && weight !== 0 ? 100 : 1);
                               return (
-                                <tr key={symbol} className="hover:bg-slate-50/50">
-                                  <td className="px-4 py-2.5 font-medium text-slate-900">
+                                <tr key={symbol} className="hover:bg-[#162032]/40 transition-colors">
+                                  <td className="px-4 py-3 font-mono font-bold text-white">
                                     {symbol}
                                   </td>
-                                  <td className="px-4 py-2.5 text-right font-semibold text-slate-800">
+                                  <td className="px-4 py-3 text-right font-mono font-bold text-cyan-300">
                                     {pct.toFixed(2)}%
                                   </td>
-                                  <td className="px-4 py-2.5 text-right w-48">
-                                    <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                                  <td className="px-4 py-3 text-right w-48">
+                                    <div className="w-full bg-[#0A0F1D] border border-[#202D45] rounded-full h-2 overflow-hidden">
                                       <div
-                                        className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+                                        className="bg-gradient-to-r from-cyan-500 to-teal-400 h-2 rounded-full transition-all duration-300"
                                         style={{ width: `${Math.max(0, Math.min(pct, 100))}%` }}
                                       />
                                     </div>
@@ -649,31 +669,31 @@ export default function OptimizationPage() {
                 {resolvedTrades.length > 0 && (
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-base">Suggested Rebalancing Trades</CardTitle>
-                      <CardDescription>
+                      <CardTitle className="text-base text-white">Suggested Rebalancing Trades</CardTitle>
+                      <CardDescription className="text-xs text-slate-400">
                         Deterministic adjustment trades required to bring current holdings into alignment.
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="p-0">
                       <div className="overflow-x-auto">
                         <table className="w-full text-xs text-left">
-                          <thead className="bg-slate-50 text-slate-500 border-y border-slate-200">
+                          <thead className="bg-[#0A0F1D] text-slate-400 border-y border-[#202D45] uppercase tracking-wider font-semibold">
                             <tr>
-                              <th className="px-4 py-2 font-medium">Asset</th>
-                              <th className="px-4 py-2 font-medium">Action</th>
-                              <th className="px-4 py-2 font-medium text-right">Units</th>
-                              <th className="px-4 py-2 font-medium text-right">Est. Value</th>
+                              <th className="px-4 py-2.5">Asset</th>
+                              <th className="px-4 py-2.5">Action</th>
+                              <th className="px-4 py-2.5 text-right">Units</th>
+                              <th className="px-4 py-2.5 text-right">Est. Value</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-100">
+                          <tbody className="divide-y divide-[#202D45]">
                             {resolvedTrades.map((tr: any, idx: number) => {
                               const act = String(tr.action || "HOLD").toUpperCase();
                               return (
-                                <tr key={idx} className="hover:bg-slate-50/50">
-                                  <td className="px-4 py-2.5 font-medium text-slate-900">
+                                <tr key={idx} className="hover:bg-[#162032]/40 transition-colors">
+                                  <td className="px-4 py-3 font-mono font-bold text-white">
                                     {tr.asset_symbol || tr.symbol}
                                   </td>
-                                  <td className="px-4 py-2.5">
+                                  <td className="px-4 py-3">
                                     <Badge
                                       variant={
                                         act === "BUY"
@@ -686,10 +706,10 @@ export default function OptimizationPage() {
                                       {act}
                                     </Badge>
                                   </td>
-                                  <td className="px-4 py-2.5 text-right font-medium text-slate-700">
+                                  <td className="px-4 py-3 text-right font-mono text-slate-300">
                                     {tr.units}
                                   </td>
-                                  <td className="px-4 py-2.5 text-right font-semibold text-slate-900">
+                                  <td className="px-4 py-3 text-right font-mono font-bold text-white">
                                     {formatCurrency(tr.estimated_amount)}
                                   </td>
                                 </tr>
@@ -704,16 +724,16 @@ export default function OptimizationPage() {
 
                 {/* Assumptions Card */}
                 {optimizationResult.assumptions && optimizationResult.assumptions.length > 0 && (
-                  <Card className="bg-slate-50">
+                  <Card className="bg-[#0A0F1D] border-[#202D45]">
                     <CardHeader className="py-3">
-                      <CardTitle className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                      <CardTitle className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
                         Solver Methodology & Assumptions
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="text-xs text-slate-600 space-y-1">
+                    <CardContent className="text-xs text-slate-400 space-y-1.5">
                       {optimizationResult.assumptions.map((ass, i) => (
                         <div key={i} className="flex items-start gap-2">
-                          <ArrowRight className="w-3.5 h-3.5 text-slate-400 mt-0.5 shrink-0" />
+                          <ArrowRight className="w-3.5 h-3.5 text-cyan-400 mt-0.5 shrink-0" />
                           <span>{ass}</span>
                         </div>
                       ))}
@@ -722,12 +742,12 @@ export default function OptimizationPage() {
                 )}
               </>
             ) : (
-              <Card className="p-8 text-center border-dashed">
-                <Sliders className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-                <h3 className="text-sm font-semibold text-slate-800 mb-1">
+              <Card className="p-10 text-center border-dashed border-[#202D45] bg-[#0A0F1D]/50">
+                <Sliders className="w-10 h-10 text-cyan-400/60 mx-auto mb-3" />
+                <h3 className="text-base font-bold text-white mb-1">
                   Ready to Optimize
                 </h3>
-                <p className="text-xs text-slate-500 max-w-md mx-auto mb-4">
+                <p className="text-xs text-slate-400 max-w-md mx-auto mb-4">
                   Select an objective in the left panel and click &ldquo;Solve Efficient Frontier&rdquo; to calculate the mathematical risk-return frontier.
                 </p>
               </Card>
@@ -738,11 +758,11 @@ export default function OptimizationPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <Scale className="w-4 h-4 text-indigo-600" />
+                    <CardTitle className="text-base text-white flex items-center gap-2">
+                      <Scale className="w-4 h-4 text-cyan-400" />
                       Asset Allocation Drift Analysis
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-xs text-slate-400">
                       Comparison of current portfolio weights vs target baseline.
                     </CardDescription>
                   </div>
@@ -759,37 +779,37 @@ export default function OptimizationPage() {
                 ) : resolvedDriftItems.length > 0 ? (
                   <>
                     <DriftComparisonBarChart items={resolvedDriftItems as any} height={240} />
-                    <div className="overflow-x-auto border-t border-slate-100 pt-3">
+                    <div className="overflow-x-auto border-t border-[#202D45] pt-3">
                       <table className="w-full text-xs text-left">
-                        <thead className="text-slate-500">
+                        <thead className="text-slate-400 uppercase tracking-wider font-semibold text-[11px]">
                           <tr>
-                            <th className="py-1">Asset Class</th>
-                            <th className="py-1 text-right">Current</th>
-                            <th className="py-1 text-right">Target</th>
-                            <th className="py-1 text-right">Variance</th>
-                            <th className="py-1 text-right">Action</th>
+                            <th className="py-2">Asset Class</th>
+                            <th className="py-2 text-right">Current</th>
+                            <th className="py-2 text-right">Target</th>
+                            <th className="py-2 text-right">Variance</th>
+                            <th className="py-2 text-right">Action</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-[#202D45]">
                           {resolvedDriftItems.map((it: any, idx: number) => (
-                            <tr key={idx}>
-                              <td className="py-2 font-medium text-slate-800 capitalize">
+                            <tr key={idx} className="hover:bg-[#162032]/30">
+                              <td className="py-2.5 font-medium text-white capitalize">
                                 {it.asset_class}
                               </td>
-                              <td className="py-2 text-right">
+                              <td className="py-2.5 text-right font-mono text-slate-300">
                                 {formatPercentage(it.current_weight)}
                               </td>
-                              <td className="py-2 text-right">
+                              <td className="py-2.5 text-right font-mono text-slate-300">
                                 {formatPercentage(it.target_weight)}
                               </td>
                               <td
-                                className={`py-2 text-right font-medium ${
-                                  it.drift > 5 ? "text-rose-600" : "text-slate-600"
+                                className={`py-2.5 text-right font-mono font-bold ${
+                                  it.drift > 5 ? "text-rose-400" : "text-slate-300"
                                 }`}
                               >
                                 {formatPercentage(it.drift)}
                               </td>
-                              <td className="py-2 text-right">
+                              <td className="py-2.5 text-right">
                                 <Badge
                                   variant={
                                     it.action === "BUY"
@@ -809,7 +829,7 @@ export default function OptimizationPage() {
                     </div>
                   </>
                 ) : (
-                  <div className="text-center py-6 text-xs text-slate-500">
+                  <div className="text-center py-6 text-xs text-slate-400">
                     No target allocation set or holdings found for this portfolio. Set targets in Goals or Portfolios to evaluate drift.
                   </div>
                 )}
@@ -831,50 +851,50 @@ export default function OptimizationPage() {
       >
         <div className="space-y-4">
           {/* Tab Selector */}
-          <div className="flex border-b border-slate-200 dark:border-slate-800 pb-1">
+          <div className="flex border-b border-[#202D45] pb-1">
             <button
               type="button"
               onClick={() => setModalTab("yfinance")}
-              className={`pb-2.5 px-4 text-sm font-bold transition-all border-b-2 flex items-center gap-2 ${
+              className={`pb-2.5 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-2 ${
                 modalTab === "yfinance"
-                  ? "border-indigo-600 text-indigo-600 dark:text-indigo-400"
-                  : "border-transparent text-slate-500 hover:text-slate-700"
+                  ? "border-cyan-400 text-cyan-300"
+                  : "border-transparent text-slate-400 hover:text-slate-200"
               }`}
             >
-              <Zap className="w-4 h-4 text-amber-500" />
+              <Zap className="w-3.5 h-3.5 text-cyan-400" />
               <span>Auto-Fetch (Yahoo Finance)</span>
             </button>
             <button
               type="button"
               onClick={() => setModalTab("csv")}
-              className={`pb-2.5 px-4 text-sm font-bold transition-all border-b-2 flex items-center gap-2 ${
+              className={`pb-2.5 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-2 ${
                 modalTab === "csv"
-                  ? "border-indigo-600 text-indigo-600 dark:text-indigo-400"
-                  : "border-transparent text-slate-500 hover:text-slate-700"
+                  ? "border-cyan-400 text-cyan-300"
+                  : "border-transparent text-slate-400 hover:text-slate-200"
               }`}
             >
-              <Upload className="w-4 h-4 text-slate-500" />
+              <Upload className="w-3.5 h-3.5 text-slate-400" />
               <span>Upload CSV File</span>
             </button>
           </div>
 
           {modalTab === "yfinance" ? (
-            <form onSubmit={handleFetchYahooMarketData} className="space-y-4">
-              <div className="p-3 bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/40 rounded-xl text-xs text-indigo-950 dark:text-indigo-200 flex items-start gap-2.5">
-                <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
+            <form onSubmit={handleFetchYahooMarketData} className="space-y-4 text-xs">
+              <div className="p-3 bg-cyan-950/40 border border-cyan-500/20 rounded-xl text-xs text-cyan-200 flex items-start gap-2.5">
+                <Sparkles className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="font-bold">Instant Market Ingestion:</span> Enter Indian stock tickers (e.g.,{" "}
-                  <code className="bg-indigo-100/70 dark:bg-indigo-900/50 px-1 py-0.5 rounded font-mono font-bold">RELIANCE.NS</code>,{" "}
-                  <code className="bg-indigo-100/70 dark:bg-indigo-900/50 px-1 py-0.5 rounded font-mono font-bold">TCS.NS</code>) or US stocks (
-                  <code className="bg-indigo-100/70 dark:bg-indigo-900/50 px-1 py-0.5 rounded font-mono font-bold">AAPL</code>,{" "}
-                  <code className="bg-indigo-100/70 dark:bg-indigo-900/50 px-1 py-0.5 rounded font-mono font-bold">NVDA</code>). Daily prices are downloaded and aligned for MPT optimization.
+                  <code className="bg-cyan-900/50 px-1 py-0.5 rounded font-mono font-bold text-cyan-300">RELIANCE.NS</code>,{" "}
+                  <code className="bg-cyan-900/50 px-1 py-0.5 rounded font-mono font-bold text-cyan-300">TCS.NS</code>) or US stocks (
+                  <code className="bg-cyan-900/50 px-1 py-0.5 rounded font-mono font-bold text-cyan-300">AAPL</code>,{" "}
+                  <code className="bg-cyan-900/50 px-1 py-0.5 rounded font-mono font-bold text-cyan-300">NVDA</code>). Daily prices are downloaded and aligned for MPT optimization.
                 </div>
               </div>
 
               {/* Presets */}
               {presets.length > 0 && (
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  <label className="text-xs font-semibold text-slate-300">
                     Quick Preset Groups:
                   </label>
                   <div className="flex flex-wrap gap-1.5">
@@ -883,7 +903,7 @@ export default function OptimizationPage() {
                         key={p.id}
                         type="button"
                         onClick={() => setYfinanceSymbols(p.symbols.join(", "))}
-                        className="px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border border-slate-200/80 dark:border-slate-700"
+                        className="px-2.5 py-1 text-xs font-medium rounded-lg bg-[#0E1524] text-slate-300 hover:bg-cyan-950/50 hover:text-cyan-300 hover:border-cyan-500/50 transition-colors border border-[#202D45]"
                       >
                         {p.name}
                       </button>
@@ -900,20 +920,20 @@ export default function OptimizationPage() {
                   onChange={(e) => setYfinanceSymbols(e.target.value)}
                   placeholder="e.g. RELIANCE.NS, TCS.NS, HDFCBANK.NS, AAPL"
                 />
-                <p className="text-[11px] text-slate-500">
-                  Tip: Append <span className="font-mono font-bold">.NS</span> for NSE India stocks (e.g. INFOSYS is INFY.NS).
+                <p className="text-[11px] text-slate-400">
+                  Tip: Append <span className="font-mono font-bold text-cyan-400">.NS</span> for NSE India stocks (e.g. INFOSYS is INFY.NS).
                 </p>
               </div>
 
               {/* Period Select */}
               <div className="space-y-1">
-                <label className="block text-xs font-medium text-slate-700 dark:text-slate-300">
+                <label className="block text-xs font-medium text-slate-300">
                   Historical Lookback Period
                 </label>
                 <select
                   value={yfinancePeriod}
                   onChange={(e) => setYfinancePeriod(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 text-xs bg-[#0E1524] border border-[#202D45] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-cyan-500 font-mono"
                 >
                   <option value="1mo">1 Month</option>
                   <option value="3mo">3 Months</option>
@@ -925,8 +945,8 @@ export default function OptimizationPage() {
               </div>
 
               {yahooFetchSuccess && (
-                <div className="p-3 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-800 dark:text-emerald-200 rounded-lg flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <div className="p-3 bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-300 rounded-lg flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                   <span>{yahooFetchSuccess}</span>
                 </div>
               )}
@@ -953,10 +973,10 @@ export default function OptimizationPage() {
               </div>
             </form>
           ) : (
-            <form onSubmit={handleUploadMarketData} className="space-y-4">
-              <p className="text-xs text-slate-600 dark:text-slate-400">
+            <form onSubmit={handleUploadMarketData} className="space-y-4 text-xs">
+              <p className="text-xs text-slate-400">
                 Upload a CSV containing historical closing prices. Expected format:{" "}
-                <code className="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded font-mono">
+                <code className="bg-[#0E1524] px-1 py-0.5 rounded font-mono text-cyan-300 border border-[#202D45]">
                   date,symbol,adjusted_close
                 </code>
                 .
@@ -966,12 +986,12 @@ export default function OptimizationPage() {
                 type="file"
                 accept=".csv"
                 onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
-                className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                className="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-cyan-950/60 file:text-cyan-300 hover:file:bg-cyan-900/80 cursor-pointer"
               />
 
               {uploadSuccess && (
-                <div className="p-3 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-800 dark:text-emerald-200 rounded-lg flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <div className="p-3 bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-300 rounded-lg flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                   <span>{uploadSuccess}</span>
                 </div>
               )}
@@ -987,6 +1007,7 @@ export default function OptimizationPage() {
                 </Button>
                 <Button
                   type="submit"
+                  variant="primary"
                   size="sm"
                   isLoading={isUploading}
                   disabled={!uploadFile}

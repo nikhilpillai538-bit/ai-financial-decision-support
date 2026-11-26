@@ -170,32 +170,32 @@ export default function TransactionsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#1A263D]">
         <div>
-          <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
             Transactions Ledger
           </h1>
-          <p className="text-base text-slate-500 dark:text-slate-400 mt-1.5 font-medium">
-            Log financial activities, categorize transactions, and import statements
+          <p className="text-xs sm:text-sm text-slate-400 mt-1 font-medium">
+            Log financial activities, categorize transactions, and import statements into the verified store.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <Button
             variant="outline"
-            size="md"
+            size="sm"
             onClick={() => setIsImportModalOpen(true)}
-            className="gap-2 shadow-xs"
+            className="gap-1.5 border-[#202D45] text-slate-300 hover:text-white"
           >
-            <Upload className="w-4 h-4" />
+            <Upload className="w-3.5 h-3.5 text-cyan-400" />
             <span>Import CSV</span>
           </Button>
           <Button
             variant="primary"
-            size="md"
+            size="sm"
             onClick={() => setIsAddModalOpen(true)}
-            className="gap-2 shadow-md shadow-indigo-600/20"
+            className="gap-1.5 shadow-md shadow-cyan-950/40"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-3.5 h-3.5" />
             <span>Add Transaction</span>
           </Button>
         </div>
@@ -205,29 +205,29 @@ export default function TransactionsPage() {
 
       {/* Filter and Search Bar */}
       <Card>
-        <CardContent className="p-5">
-          <div className="flex flex-col sm:flex-row items-center gap-4">
+        <CardContent className="p-4 sm:p-5">
+          <div className="flex flex-col sm:flex-row items-center gap-3">
             <div className="relative flex-1 w-full">
-              <Search className="w-5 h-5 absolute left-4 top-3.5 text-slate-400" />
+              <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
               <input
                 type="text"
                 placeholder="Search by description, category, or amount..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-2.5 text-sm md:text-base bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
+                className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm bg-[#0E1524] border border-[#202D45] rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-400 transition-all text-white placeholder:text-slate-400"
               />
             </div>
 
             <div className="flex items-center gap-2 w-full sm:w-auto">
-              <Filter className="w-5 h-5 text-slate-400 shrink-0" />
+              <Filter className="w-4 h-4 text-slate-400 shrink-0" />
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-4 py-2.5 text-sm md:text-base bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 w-full sm:w-56 text-slate-700 dark:text-slate-200 font-medium"
+                className="px-3.5 py-2 text-xs sm:text-sm bg-[#0E1524] border border-[#202D45] rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-400 w-full sm:w-56 text-slate-200 font-medium"
               >
-                <option value="">All Categories</option>
+                <option value="" className="bg-[#0E1524] text-slate-400">All Categories</option>
                 {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
+                  <option key={c} value={c} className="bg-[#0E1524] text-white">
                     {c}
                   </option>
                 ))}
@@ -239,10 +239,10 @@ export default function TransactionsPage() {
 
       {/* Transactions Table */}
       <Card>
-        <CardHeader className="py-5 px-6 flex flex-row items-center justify-between border-b border-slate-100 dark:border-slate-800">
+        <CardHeader className="py-4 px-5 sm:px-6 flex flex-row items-center justify-between border-b border-[#1C273C]">
           <div>
-            <CardTitle className="text-base md:text-lg">Transaction Ledger</CardTitle>
-            <CardDescription className="text-sm">
+            <CardTitle>Transaction Ledger</CardTitle>
+            <CardDescription>
               Showing {filteredTransactions.length} of {totalCount} verified records
             </CardDescription>
           </div>
@@ -256,58 +256,58 @@ export default function TransactionsPage() {
               description="No transaction records match the selected filter. Add a transaction or import a statement."
               icon={<Receipt className="w-8 h-8" />}
               action={
-                <Button variant="primary" size="md" onClick={() => setIsAddModalOpen(true)}>
+                <Button variant="primary" size="sm" onClick={() => setIsAddModalOpen(true)}>
                   Add First Transaction
                 </Button>
               }
             />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="bg-slate-50/80 dark:bg-slate-800/60 text-slate-500 uppercase tracking-wider text-xs font-bold border-y border-slate-100 dark:border-slate-800">
+              <table className="w-full text-xs sm:text-sm text-left">
+                <thead className="bg-[#0C121F] text-slate-400 uppercase tracking-wider text-[11px] font-bold border-y border-[#1C273C]">
                   <tr>
-                    <th className="py-4 px-6">Date</th>
-                    <th className="py-4 px-6">Description</th>
-                    <th className="py-4 px-6">Category</th>
-                    <th className="py-4 px-6 text-center">Type</th>
-                    <th className="py-4 px-6 text-right">Amount</th>
-                    <th className="py-4 px-6 text-right">Actions</th>
+                    <th className="py-3 px-5 sm:px-6">Date</th>
+                    <th className="py-3 px-5 sm:px-6">Description</th>
+                    <th className="py-3 px-5 sm:px-6">Category</th>
+                    <th className="py-3 px-5 sm:px-6 text-center">Type</th>
+                    <th className="py-3 px-5 sm:px-6 text-right">Amount</th>
+                    <th className="py-3 px-5 sm:px-6 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                <tbody className="divide-y divide-[#1C273C]">
                   {filteredTransactions.map((tx) => (
-                    <tr key={tx.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
-                      <td className="py-4 px-6 text-slate-500 font-medium whitespace-nowrap">
+                    <tr key={tx.id} className="hover:bg-[#141C2C]/50 transition-colors">
+                      <td className="py-3.5 px-5 sm:px-6 text-slate-400 font-mono text-xs whitespace-nowrap">
                         {formatDate(tx.date)}
                       </td>
-                      <td className="py-4 px-6 font-semibold text-slate-900 dark:text-slate-100 max-w-sm truncate">
+                      <td className="py-3.5 px-5 sm:px-6 font-semibold text-white max-w-sm truncate">
                         {tx.description}
                       </td>
-                      <td className="py-4 px-6">
+                      <td className="py-3.5 px-5 sm:px-6">
                         <Badge variant="default">{tx.category}</Badge>
                       </td>
-                      <td className="py-4 px-6 text-center">
+                      <td className="py-3.5 px-5 sm:px-6 text-center">
                         <Badge variant={tx.transaction_type === "income" ? "success" : "default"}>
                           {tx.transaction_type.toUpperCase()}
                         </Badge>
                       </td>
                       <td
-                        className={`py-4 px-6 text-right font-bold text-base whitespace-nowrap ${
+                        className={`py-3.5 px-5 sm:px-6 text-right font-bold text-xs sm:text-sm font-mono whitespace-nowrap ${
                           tx.transaction_type === "income"
-                            ? "text-emerald-600 dark:text-emerald-400"
-                            : "text-slate-900 dark:text-slate-100"
+                            ? "text-emerald-400"
+                            : "text-slate-100"
                         }`}
                       >
                         {tx.transaction_type === "income" ? "+" : "-"}
                         {formatCurrency(tx.amount, "INR")}
                       </td>
-                      <td className="py-4 px-6 text-right">
+                      <td className="py-3.5 px-5 sm:px-6 text-right">
                         <button
                           onClick={() => handleDeleteTransaction(tx.id)}
-                          className="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition-colors"
+                          className="text-slate-400 hover:text-rose-400 p-1.5 rounded-lg hover:bg-rose-950/30 transition-colors"
                           title="Delete transaction"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </td>
                     </tr>
@@ -342,10 +342,10 @@ export default function TransactionsPage() {
               <select
                 value={txType}
                 onChange={(e) => setTxType(e.target.value as TransactionType)}
-                className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100"
+                className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-[#0E1524] border border-[#202D45] rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-400 font-medium"
               >
-                <option value="expense">Expense</option>
-                <option value="income">Income</option>
+                <option value="expense" className="bg-[#0E1524] text-white">Expense</option>
+                <option value="income" className="bg-[#0E1524] text-white">Income</option>
               </select>
             </div>
           </div>
@@ -362,16 +362,16 @@ export default function TransactionsPage() {
               required
             />
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                 Category
               </label>
               <select
                 value={txCategory}
                 onChange={(e) => setTxCategory(e.target.value)}
-                className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100"
+                className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-[#0E1524] border border-[#202D45] rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-400 font-medium"
               >
                 {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
+                  <option key={c} value={c} className="bg-[#0E1524] text-white">
                     {c}
                   </option>
                 ))}
@@ -414,27 +414,27 @@ export default function TransactionsPage() {
           {importError && <ErrorBanner message={importError} />}
 
           {importResult && (
-            <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs space-y-1.5">
-              <div className="flex items-center gap-1.5 font-semibold text-emerald-800">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-800/80 text-emerald-200 text-xs space-y-2 animate-fade-in">
+              <div className="flex items-center gap-1.5 font-bold text-emerald-300">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>CSV Processing Complete</span>
               </div>
-              <div className="grid grid-cols-3 gap-2 text-center pt-1 font-medium">
-                <div className="bg-white/80 p-1.5 rounded border border-emerald-100">
-                  <span className="block text-slate-500 text-[10px]">Total</span>
-                  <span className="font-bold text-slate-800">{importResult.total_rows}</span>
+              <div className="grid grid-cols-3 gap-2 text-center pt-1 font-mono">
+                <div className="bg-[#0E1524] p-2 rounded-lg border border-[#202D45]">
+                  <span className="block text-slate-400 text-[10px] uppercase">Total</span>
+                  <span className="font-bold text-white text-sm">{importResult.total_rows}</span>
                 </div>
-                <div className="bg-white/80 p-1.5 rounded border border-emerald-100">
-                  <span className="block text-emerald-600 text-[10px]">Imported</span>
-                  <span className="font-bold text-emerald-700">{importResult.imported_count}</span>
+                <div className="bg-[#0E1524] p-2 rounded-lg border border-[#202D45]">
+                  <span className="block text-emerald-400 text-[10px] uppercase">Imported</span>
+                  <span className="font-bold text-emerald-400 text-sm">{importResult.imported_count}</span>
                 </div>
-                <div className="bg-white/80 p-1.5 rounded border border-emerald-100">
-                  <span className="block text-amber-600 text-[10px]">Duplicates</span>
-                  <span className="font-bold text-amber-700">{importResult.duplicate_count}</span>
+                <div className="bg-[#0E1524] p-2 rounded-lg border border-[#202D45]">
+                  <span className="block text-amber-400 text-[10px] uppercase">Duplicates</span>
+                  <span className="font-bold text-amber-400 text-sm">{importResult.duplicate_count}</span>
                 </div>
               </div>
               {importResult.errors && importResult.errors.length > 0 && (
-                <div className="text-rose-600 pt-1 text-[11px]">
+                <div className="text-rose-400 pt-1 text-[11px]">
                   <p className="font-semibold">Skipped / Error Rows:</p>
                   <ul className="list-disc pl-4 space-y-0.5 max-h-24 overflow-y-auto">
                     {importResult.errors.map((err, idx) => (
@@ -446,21 +446,21 @@ export default function TransactionsPage() {
             </div>
           )}
 
-          <div className="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-5 text-center space-y-3">
-            <Upload className="w-8 h-8 text-slate-400 mx-auto" />
+          <div className="border border-dashed border-[#23324C] rounded-2xl p-6 text-center space-y-3 bg-[#0D1422]/60">
+            <Upload className="w-8 h-8 text-cyan-400 mx-auto" />
             <input
               type="file"
               accept=".csv"
               onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-              className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+              className="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-cyan-950/80 file:text-cyan-300 hover:file:bg-cyan-900/80 cursor-pointer"
             />
-            <div className="text-[11px] text-slate-500 space-y-1">
-              <p>Expected columns: <code className="font-mono bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">date, description, amount, transaction_type, category</code></p>
+            <div className="text-[11px] text-slate-400 space-y-1.5">
+              <p>Expected columns: <code className="font-mono bg-[#111827] border border-[#202D45] px-1.5 py-0.5 rounded text-cyan-300">date, description, amount, transaction_type, category</code></p>
               <div className="pt-1">
                 <button
                   type="button"
                   onClick={downloadSampleCSV}
-                  className="inline-flex items-center gap-1.5 text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 font-semibold text-xs hover:underline"
+                  className="inline-flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 font-bold text-xs hover:underline"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download Sample CSV Template</span>

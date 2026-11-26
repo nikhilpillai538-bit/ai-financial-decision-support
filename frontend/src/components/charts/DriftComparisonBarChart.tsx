@@ -29,8 +29,9 @@ export function DriftComparisonBarChart({
 
   if (!items || items.length === 0) {
     return (
-      <div className="flex items-center justify-center h-48 text-xs text-slate-400">
-        No drift comparison metrics available.
+      <div className="flex flex-col items-center justify-center h-48 text-xs text-slate-400 border border-dashed border-[#202D45] rounded-xl bg-[#0D1422]/40 p-4">
+        <span className="font-semibold text-slate-300 mb-1">No Drift Metrics Available</span>
+        <span className="text-[11px] text-slate-400">Configure target weights and holdings to evaluate portfolio drift</span>
       </div>
     );
   }
@@ -60,9 +61,9 @@ export function DriftComparisonBarChart({
     return (
       <div
         style={{ width: "100%", height, minHeight: height }}
-        className="flex items-center justify-center bg-slate-50 rounded-lg animate-pulse text-xs text-slate-400"
+        className="flex items-center justify-center bg-[#0D1422]/40 rounded-xl animate-pulse text-xs text-slate-400"
       >
-        Loading drift chart...
+        Calculating target variance...
       </div>
     );
   }
@@ -71,11 +72,12 @@ export function DriftComparisonBarChart({
     <div style={{ width: "100%", height, minHeight: height }}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-          <XAxis dataKey="asset_class" tick={{ fontSize: 11, fill: "#64748b" }} />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1C283F" />
+          <XAxis dataKey="asset_class" tick={{ fontSize: 11, fill: "#64748B" }} axisLine={{ stroke: "#24334F" }} />
           <YAxis
             tickFormatter={(val) => `${val}%`}
-            tick={{ fontSize: 11, fill: "#64748b" }}
+            tick={{ fontSize: 11, fill: "#64748B" }}
+            axisLine={{ stroke: "#24334F" }}
           />
           <Tooltip
             formatter={(val: any, name: any) => [
@@ -83,19 +85,21 @@ export function DriftComparisonBarChart({
               name === "current" ? "Current Weight" : "Target Weight",
             ]}
             contentStyle={{
-              backgroundColor: "#1e293b",
-              borderColor: "#334155",
-              borderRadius: "0.5rem",
-              color: "#f8fafc",
+              backgroundColor: "#0C121E",
+              borderColor: "#22314E",
+              borderRadius: "0.75rem",
+              color: "#F8FAFC",
               fontSize: "0.75rem",
+              boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.5)",
+              padding: "8px 12px",
             }}
           />
           <Legend
             iconType="circle"
-            wrapperStyle={{ fontSize: "0.75rem", paddingTop: "8px" }}
+            wrapperStyle={{ fontSize: "0.75rem", paddingTop: "8px", color: "#94A3B8" }}
           />
-          <Bar dataKey="current" name="Current %" fill="#4f46e5" radius={[4, 4, 0, 0]} />
-          <Bar dataKey="target" name="Target %" fill="#94a3b8" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="current" name="Current %" fill="#06B6D4" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="target" name="Target %" fill="#475569" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

@@ -28,6 +28,7 @@ import {
   Save,
   CheckCircle2,
   Lock,
+  Cpu,
 } from "lucide-react";
 
 export default function SettingsPage() {
@@ -100,21 +101,26 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-8 max-w-5xl">
+    <div className="space-y-8 max-w-5xl animate-fadeIn">
       {/* Page Header */}
-      <div>
-        <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900">
-          Account Settings & System Diagnostics
-        </h1>
-        <p className="text-base text-slate-500 mt-1.5 font-medium">
-          Manage your authenticated identity, financial baseline parameters, and backend connectivity.
+      <div className="border-b border-[#202D45] pb-6">
+        <div className="flex items-center gap-2.5">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+            Account Settings & System Diagnostics
+          </h1>
+          <Badge variant="cyan" className="font-mono text-[10px] uppercase tracking-wider">
+            Configuration
+          </Badge>
+        </div>
+        <p className="text-sm text-slate-400 mt-1.5 font-normal">
+          Manage your authenticated identity, financial baseline parameters, and backend cluster telemetry.
         </p>
       </div>
 
       {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
       {profileSuccess && (
-        <div className="p-3 bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 rounded-lg flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+        <div className="p-3 bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-300 rounded-xl flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
           <span>{profileSuccess}</span>
         </div>
       )}
@@ -122,52 +128,52 @@ export default function SettingsPage() {
       {/* User Account Details */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <User className="w-4 h-4 text-primary-600" />
+          <CardTitle className="text-base text-white flex items-center gap-2">
+            <User className="w-4 h-4 text-cyan-400" />
             Authenticated Identity
           </CardTitle>
-          <CardDescription>
-            Account credentials and multi-tenant data boundary.
+          <CardDescription className="text-xs text-slate-400">
+            Account credentials and cryptographic tenant boundary.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 text-xs">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-              <span className="text-slate-400 block mb-0.5">Email Address</span>
-              <span className="font-semibold text-slate-800 text-sm">
+            <div className="p-3.5 bg-[#0A0F1D] rounded-xl border border-[#202D45]">
+              <span className="text-slate-400 block mb-0.5 text-[11px] font-medium uppercase tracking-wider">Email Address</span>
+              <span className="font-mono font-bold text-white text-sm">
                 {user?.email || "—"}
               </span>
             </div>
-            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-              <span className="text-slate-400 block mb-0.5">Account Status</span>
+            <div className="p-3.5 bg-[#0A0F1D] rounded-xl border border-[#202D45]">
+              <span className="text-slate-400 block mb-0.5 text-[11px] font-medium uppercase tracking-wider">Account Status</span>
               <div className="flex items-center gap-2 mt-0.5">
                 <Badge variant={user?.is_active ? "success" : "danger"}>
                   {user?.is_active ? "Active" : "Inactive"}
                 </Badge>
-                <span className="text-slate-500 text-[11px]">
-                  Created {user?.created_at ? formatDate(user.created_at) : "—"}
+                <span className="text-slate-400 font-mono text-[11px]">
+                  Registered {user?.created_at ? formatDate(user.created_at) : "—"}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="p-3 bg-blue-50/70 rounded-lg border border-blue-100 flex items-start gap-2.5">
-            <Shield className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
-            <div className="text-blue-900">
-              <span className="font-semibold block mb-0.5">Strict User Data Isolation</span>
-              All financial transactions, portfolios, holdings, and AI chat sessions are isolated by your unique cryptographic user ID (<code className="text-blue-800 text-[11px]">{user?.id || "anonymous"}</code>).
+          <div className="p-3.5 bg-cyan-950/30 rounded-xl border border-cyan-500/20 flex items-start gap-3">
+            <Shield className="w-4 h-4 text-cyan-400 mt-0.5 shrink-0" />
+            <div className="text-cyan-200">
+              <span className="font-semibold block mb-0.5">Cryptographic Tenant Data Boundary</span>
+              All personal financial transactions, portfolios, holdings, and AI decision threads are isolated under your tenant identifier (<code className="text-cyan-300 font-mono text-[11px]">{user?.id || "anonymous"}</code>).
             </div>
           </div>
         </CardContent>
-        <CardFooter className="bg-slate-50/50 border-t border-slate-100 justify-between">
-          <span className="text-[11px] text-slate-400">
-            Session stored in secure browser memory / sessionStorage
+        <CardFooter className="bg-[#0A0F1D] border-t border-[#202D45] justify-between">
+          <span className="text-[11px] text-slate-400 font-mono">
+            Session active via cryptographic token in secure browser storage
           </span>
           <Button
             variant="outline"
             size="sm"
             onClick={logout}
-            className="text-rose-600 hover:text-rose-700 hover:bg-rose-50"
+            className="text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 border-rose-500/30"
           >
             <LogOut className="w-4 h-4 mr-1.5" />
             Sign Out
@@ -178,16 +184,16 @@ export default function SettingsPage() {
       {/* Financial Profile Baseline */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Activity className="w-4 h-4 text-emerald-600" />
+          <CardTitle className="text-base text-white flex items-center gap-2">
+            <Activity className="w-4 h-4 text-teal-400" />
             Financial Baseline Profile
           </CardTitle>
-          <CardDescription>
-            Override or set defaults used for emergency fund targets and cash-flow projections.
+          <CardDescription className="text-xs text-slate-400">
+            Override or configure default parameters used for emergency fund reserve runway and cash-flow projections.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSaveProfile} className="space-y-4">
+          <form onSubmit={handleSaveProfile} className="space-y-4 text-xs">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
                 label="Baseline Monthly Essential Expenses (₹)"
@@ -207,7 +213,7 @@ export default function SettingsPage() {
               />
             </div>
             <div className="flex justify-end">
-              <Button type="submit" size="sm" isLoading={isSavingProfile}>
+              <Button type="submit" variant="primary" size="sm" isLoading={isSavingProfile}>
                 <Save className="w-4 h-4 mr-1.5" />
                 Update Baseline
               </Button>
@@ -219,19 +225,19 @@ export default function SettingsPage() {
       {/* Backend Diagnostics */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Server className="w-4 h-4 text-slate-600" />
+          <CardTitle className="text-base text-white flex items-center gap-2">
+            <Server className="w-4 h-4 text-cyan-400" />
             Backend API Connectivity & Health
           </CardTitle>
-          <CardDescription>
-            Verify network connectivity and response latency to the FastAPI financial engine.
+          <CardDescription className="text-xs text-slate-400">
+            Verify network connectivity and response latency to the FastAPI financial computation engine.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3 text-xs">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 bg-[#0A0F1D] rounded-xl border border-[#202D45]">
             <div>
-              <span className="text-slate-400 block mb-0.5">Target API Host:</span>
-              <code className="text-slate-800 font-mono text-xs">
+              <span className="text-slate-400 block mb-0.5 text-[11px] uppercase font-semibold">Target API Host:</span>
+              <code className="text-cyan-300 font-mono text-xs">
                 {process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000"}
               </code>
             </div>
@@ -246,20 +252,20 @@ export default function SettingsPage() {
           </div>
 
           {pingResult && (
-            <div className="p-3 bg-white border border-slate-200 rounded-lg space-y-1">
+            <div className="p-3.5 bg-[#0A0F1D] border border-[#202D45] rounded-xl space-y-2 font-mono">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-slate-700">Health Endpoint:</span>
-                <span className="font-mono text-slate-800">{pingResult.url}/health</span>
+                <span className="text-slate-400 font-sans text-xs">Health Endpoint:</span>
+                <span className="text-slate-200 text-xs">{pingResult.url}/health</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-slate-700">Response Status:</span>
+                <span className="text-slate-400 font-sans text-xs">Response Status:</span>
                 <Badge variant={pingResult.status.includes("200") ? "success" : "danger"}>
                   {pingResult.status}
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-slate-700">Roundtrip Latency:</span>
-                <span className="font-mono text-slate-800">{pingResult.latencyMs} ms</span>
+                <span className="text-slate-400 font-sans text-xs">Roundtrip Latency:</span>
+                <span className="text-cyan-300 text-xs font-bold">{pingResult.latencyMs} ms</span>
               </div>
             </div>
           )}

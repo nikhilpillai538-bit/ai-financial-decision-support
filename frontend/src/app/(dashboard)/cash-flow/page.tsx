@@ -49,14 +49,14 @@ export default function CashFlowPage() {
   const netFlow = endingBalance - startingBalance;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8 animate-fade-in">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
+      <div className="pb-2 border-b border-[#1A263D]">
+        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
           30-Day Cash Flow Forecast
         </h1>
-        <p className="text-base text-slate-500 dark:text-slate-400 mt-1.5 font-medium">
-          Deterministic projection of liquidity, estimated daily inflows, and recurring outflows
+        <p className="text-xs sm:text-sm text-slate-400 mt-1 font-medium">
+          Deterministic projection of liquidity, estimated daily inflows, and recurring outflows.
         </p>
       </div>
 
@@ -73,7 +73,7 @@ export default function CashFlowPage() {
           title="Starting Balance"
           value={formatCurrency(forecast?.opening_balance || forecast?.starting_balance, "INR")}
           subtitle="Baseline liquid cash balance"
-          icon={<Calendar className="w-5 h-5" />}
+          icon={<Calendar className="w-5 h-5 text-slate-300" />}
           variant="default"
         />
 
@@ -81,7 +81,7 @@ export default function CashFlowPage() {
           title="Projected Ending Balance"
           value={formatCurrency(forecast?.projected_closing_balance || forecast?.projected_ending_balance, "INR")}
           subtitle={`Net change: ${formatCurrency(netFlow, "INR", { showPlusSign: true })}`}
-          icon={netFlow >= 0 ? <ArrowUpRight className="w-5 h-5" /> : <ArrowDownRight className="w-5 h-5" />}
+          icon={netFlow >= 0 ? <ArrowUpRight className="w-5 h-5 text-emerald-400" /> : <ArrowDownRight className="w-5 h-5 text-rose-400" />}
           variant={netFlow >= 0 ? "success" : "danger"}
         />
 
@@ -89,7 +89,7 @@ export default function CashFlowPage() {
           title="Projected Minimum"
           value={formatCurrency(forecast?.projected_minimum_balance || "0", "INR")}
           subtitle={`Lowest date: ${forecast?.lowest_projected_date ? formatDate(forecast.lowest_projected_date) : "—"}`}
-          icon={<AlertTriangle className="w-5 h-5" />}
+          icon={<AlertTriangle className="w-5 h-5 text-amber-400" />}
           variant={minBalance < 0 ? "danger" : "default"}
         />
 
@@ -97,7 +97,7 @@ export default function CashFlowPage() {
           title="Forecast Horizon"
           value={`${forecast?.forecast_days || 30} Days`}
           subtitle="Daily projection granularity"
-          icon={<TrendingUp className="w-5 h-5" />}
+          icon={<TrendingUp className="w-5 h-5 text-cyan-400" />}
           variant="brand"
         />
       </div>
@@ -105,8 +105,8 @@ export default function CashFlowPage() {
       {/* Main Chart Card */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg font-bold">Projected Liquid Balance Over Next 30 Days</CardTitle>
-          <CardDescription className="text-sm">
+          <CardTitle>Projected Liquid Balance Over Next 30 Days</CardTitle>
+          <CardDescription>
             Estimated balance trajectory based on historical cash flow frequency
           </CardDescription>
         </CardHeader>
@@ -123,12 +123,12 @@ export default function CashFlowPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2.5">
-            <Info className="w-5 h-5 text-indigo-600" />
-            <CardTitle className="text-base font-bold">Model Assumptions & Notes</CardTitle>
+            <Info className="w-5 h-5 text-cyan-400" />
+            <CardTitle>Model Assumptions & Notes</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
-          <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400 list-disc list-inside font-medium">
+          <ul className="space-y-2 text-xs sm:text-sm text-slate-300 list-disc list-inside font-medium leading-relaxed">
             {forecast?.assumptions && forecast.assumptions.length > 0 ? (
               forecast.assumptions.map((asm, idx) => <li key={idx}>{asm}</li>)
             ) : (

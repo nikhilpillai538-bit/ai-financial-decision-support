@@ -39,6 +39,7 @@ import {
   Activity,
   Layers,
   ArrowRight,
+  Cpu,
 } from "lucide-react";
 
 const STARTER_PROMPTS = [
@@ -206,19 +207,24 @@ export default function AssistantPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fadeIn">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#202D45] pb-6">
         <div>
-          <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 flex items-center gap-3">
-            <Sparkles className="w-8 h-8 text-indigo-600" />
-            AI Financial Decision Assistant
-          </h1>
-          <p className="text-base text-slate-500 mt-1.5 font-medium">
-            Evidence-grounded explanations, verified calculations, and comprehensive financial synthesis.
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
+              <Sparkles className="w-7 h-7 text-cyan-400" />
+              AI Financial Decision Assistant
+            </h1>
+            <Badge variant="cyan" className="font-mono text-[10px] uppercase tracking-wider">
+              Grounded AI Engine
+            </Badge>
+          </div>
+          <p className="text-sm text-slate-400 mt-1.5 font-normal">
+            Evidence-grounded explanations, verified calculations, and comprehensive financial synthesis without hallucinations.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           <Button
             variant="outline"
             size="md"
@@ -231,9 +237,9 @@ export default function AssistantPage() {
             What-If Scenario
           </Button>
           <Button
+            variant="primary"
             size="md"
             onClick={handleGenerateHealthReport}
-            className="shadow-md shadow-indigo-600/20"
           >
             <CheckCircle2 className="w-4 h-4 mr-2" />
             Health Synthesis
@@ -244,22 +250,22 @@ export default function AssistantPage() {
       {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
 
       {/* Main Chat Interface */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 min-h-[620px]">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 min-h-[640px]">
         {/* Threads Sidebar */}
-        <Card className="md:col-span-1 flex flex-col h-[620px]">
-          <div className="p-3 border-b border-slate-200">
+        <Card className="md:col-span-1 flex flex-col h-[640px] overflow-hidden">
+          <div className="p-3 border-b border-[#202D45]">
             <Button
               variant="outline"
               size="sm"
               onClick={handleStartNewThread}
-              className="w-full justify-start text-xs"
+              className="w-full justify-start text-xs gap-2"
             >
-              <PlusCircle className="w-4 h-4 mr-2 text-primary-600" />
+              <PlusCircle className="w-4 h-4 text-cyan-400" />
               New Chat Thread
             </Button>
           </div>
 
-          <div className="flex-1 overflow-y-auto divide-y divide-slate-100 p-2 space-y-1">
+          <div className="flex-1 overflow-y-auto divide-y divide-[#202D45] p-2 space-y-1">
             {isLoadingThreads ? (
               <div className="p-4 text-center text-xs text-slate-400">Loading conversations...</div>
             ) : threads.length === 0 ? (
@@ -273,15 +279,15 @@ export default function AssistantPage() {
                   onClick={() => setActiveThreadId(t.thread_id)}
                   className={`w-full text-left p-2.5 rounded-lg text-xs transition-colors ${
                     activeThreadId === t.thread_id
-                      ? "bg-primary-50 text-primary-900 font-medium"
-                      : "text-slate-700 hover:bg-slate-50"
+                      ? "bg-[#162032] border-l-2 border-cyan-400 text-white font-medium"
+                      : "text-slate-400 hover:bg-[#162032]/40 hover:text-slate-200"
                   }`}
                 >
                   <div className="flex items-center gap-1.5 truncate">
-                    <MessageSquare className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+                    <MessageSquare className="w-3.5 h-3.5 shrink-0 text-cyan-400" />
                     <span className="truncate">{t.title || "Financial Conversation"}</span>
                   </div>
-                  <div className="text-[10px] text-slate-400 mt-1 pl-5">
+                  <div className="text-[10px] text-slate-400 font-mono mt-1 pl-5">
                     {formatDate(t.last_message_at || t.created_at)}
                   </div>
                 </button>
@@ -291,14 +297,14 @@ export default function AssistantPage() {
 
           {/* Context Selector */}
           {portfolios.length > 0 && (
-            <div className="p-3 border-t border-slate-200 bg-slate-50 text-xs">
-              <label className="block text-[11px] font-medium text-slate-600 mb-1">
+            <div className="p-3 border-t border-[#202D45] bg-[#0A0F1D] text-xs">
+              <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
                 Portfolio Grounding:
               </label>
               <select
                 value={selectedPortfolioId}
                 onChange={(e) => setSelectedPortfolioId(e.target.value)}
-                className="w-full text-xs rounded border border-slate-300 bg-white p-1.5 text-slate-800"
+                className="w-full text-xs rounded-lg border border-[#202D45] bg-[#0E1524] p-2 text-white font-medium focus:outline-none focus:ring-1 focus:ring-cyan-500"
               >
                 <option value="">All Portfolios / Aggregate</option>
                 {portfolios.map((p) => (
@@ -312,17 +318,17 @@ export default function AssistantPage() {
         </Card>
 
         {/* Chat Messages Panel */}
-        <Card className="md:col-span-3 flex flex-col h-[620px]">
+        <Card className="md:col-span-3 flex flex-col h-[640px] overflow-hidden">
           {/* Header */}
-          <div className="p-3 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
+          <div className="p-3.5 border-b border-[#202D45] flex items-center justify-between bg-[#0A0F1D]">
             <div className="flex items-center gap-2">
-              <Bot className="w-4 h-4 text-primary-600" />
-              <span className="text-xs font-semibold text-slate-800">
+              <Cpu className="w-4 h-4 text-cyan-400" />
+              <span className="text-xs font-semibold text-white">
                 Grounding Engine: Financial Context Retrieval + FinBERT
               </span>
             </div>
-            <span className="text-[11px] text-slate-500">
-              Deterministic calculations authoritative
+            <span className="text-[11px] font-mono text-cyan-400/80">
+              Deterministic Calculations Authoritative
             </span>
           </div>
 
@@ -332,24 +338,24 @@ export default function AssistantPage() {
               <LoadingState message="Retrieving conversation history..." />
             ) : messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-4">
-                <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
-                  <Bot className="w-6 h-6" />
+                <div className="w-14 h-14 rounded-2xl bg-[#0E1524] border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-glow-cyan">
+                  <Bot className="w-7 h-7" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-800">
+                  <h3 className="text-base font-bold text-white">
                     How can I assist your financial decision-making today?
                   </h3>
-                  <p className="text-xs text-slate-500 max-w-md mt-1">
+                  <p className="text-xs text-slate-400 max-w-md mt-1 leading-relaxed">
                     Ask questions regarding your cash flow, emergency reserves, portfolio allocation drift, or market news impact.
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full max-w-lg pt-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full max-w-lg pt-2">
                   {STARTER_PROMPTS.map((prompt, idx) => (
                     <button
                       key={idx}
                       onClick={() => handleSendMessage(prompt)}
-                      className="text-left text-xs p-2.5 rounded-lg border border-slate-200 hover:border-primary-400 hover:bg-primary-50/40 text-slate-700 transition-colors"
+                      className="text-left text-xs p-3 rounded-xl border border-[#202D45] hover:border-cyan-500/50 hover:bg-cyan-950/20 text-slate-300 hover:text-cyan-200 transition-colors leading-relaxed"
                     >
                       &ldquo;{prompt}&rdquo;
                     </button>
@@ -365,16 +371,16 @@ export default function AssistantPage() {
                   }`}
                 >
                   {msg.role === "assistant" && (
-                    <div className="w-7 h-7 rounded-full bg-primary-100 flex items-center justify-center shrink-0 mt-0.5 text-primary-600">
+                    <div className="w-8 h-8 rounded-xl bg-cyan-950/60 border border-cyan-500/30 flex items-center justify-center shrink-0 mt-0.5 text-cyan-400">
                       <Bot className="w-4 h-4" />
                     </div>
                   )}
 
                   <div
-                    className={`max-w-2xl rounded-xl p-3.5 text-xs space-y-2.5 ${
+                    className={`max-w-2xl rounded-2xl p-4 text-xs space-y-3 leading-relaxed ${
                       msg.role === "user"
-                        ? "bg-primary-600 text-white ml-12"
-                        : "bg-slate-50 border border-slate-200 text-slate-800 mr-12"
+                        ? "bg-gradient-to-r from-cyan-600 to-teal-600 text-white shadow-md shadow-cyan-950/50 ml-12"
+                        : "bg-[#0E1524] border border-[#202D45] text-slate-200 mr-12"
                     }`}
                   >
                     {/* Content */}
@@ -384,12 +390,12 @@ export default function AssistantPage() {
 
                     {/* Domains Retrieved Pills */}
                     {msg.domains_retrieved && msg.domains_retrieved.length > 0 && (
-                      <div className="flex items-center gap-1.5 flex-wrap pt-2 border-t border-slate-200/60 text-[10px]">
+                      <div className="flex items-center gap-1.5 flex-wrap pt-2 border-t border-[#202D45] text-[10px]">
                         <span className="text-slate-400 font-medium">Grounded in:</span>
                         {msg.domains_retrieved.map((d, dIdx) => (
                           <span
                             key={dIdx}
-                            className="bg-slate-200/70 text-slate-700 px-1.5 py-0.5 rounded capitalize"
+                            className="bg-[#162032] border border-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded capitalize font-mono"
                           >
                             {d.replace("_", " ")}
                           </span>
@@ -399,15 +405,15 @@ export default function AssistantPage() {
 
                     {/* Verified Metrics Card */}
                     {msg.verified_metrics && Object.keys(msg.verified_metrics).length > 0 && (
-                      <div className="bg-white border border-slate-200 rounded-lg p-2.5 space-y-1 text-[11px]">
-                        <span className="font-semibold text-slate-700 block text-[10px] uppercase tracking-wider">
+                      <div className="bg-[#0A0F1D] border border-[#202D45] rounded-xl p-3 space-y-1.5 text-[11px]">
+                        <span className="font-semibold text-cyan-300 block text-[10px] uppercase tracking-wider font-mono">
                           Backend Verified Metrics:
                         </span>
-                        <div className="grid grid-cols-2 gap-x-3 gap-y-1">
+                        <div className="grid grid-cols-2 gap-x-3 gap-y-1 font-mono">
                           {Object.entries(msg.verified_metrics).map(([k, v]) => (
                             <div key={k} className="flex justify-between">
-                              <span className="text-slate-500 capitalize">{k.replace("_", " ")}:</span>
-                              <span className="font-semibold text-slate-800">
+                              <span className="text-slate-400 capitalize font-sans">{k.replace("_", " ")}:</span>
+                              <span className="font-bold text-white">
                                 {typeof v === "number" ? v.toLocaleString() : String(v)}
                               </span>
                             </div>
@@ -418,15 +424,15 @@ export default function AssistantPage() {
 
                     {/* Warnings */}
                     {msg.warnings && msg.warnings.length > 0 && (
-                      <div className="bg-amber-50 border border-amber-200 rounded p-2 text-amber-800 text-[11px]">
+                      <div className="bg-amber-950/40 border border-amber-500/30 rounded-lg p-2.5 text-amber-300 text-[11px]">
                         {msg.warnings.join(" ")}
                       </div>
                     )}
 
                     {/* Suggested Followups */}
                     {msg.suggested_followups && msg.suggested_followups.length > 0 && (
-                      <div className="pt-2 border-t border-slate-200/60 space-y-1">
-                        <span className="text-[10px] text-slate-400 uppercase tracking-wider block">
+                      <div className="pt-2 border-t border-[#202D45] space-y-1.5">
+                        <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">
                           Suggested Inquiries:
                         </span>
                         <div className="flex flex-wrap gap-1.5">
@@ -434,7 +440,7 @@ export default function AssistantPage() {
                             <button
                               key={fuIdx}
                               onClick={() => handleSendMessage(fu)}
-                              className="text-[11px] bg-white border border-slate-300 hover:border-primary-400 text-slate-700 hover:text-primary-600 px-2.5 py-1 rounded-md transition-colors text-left"
+                              className="text-[11px] bg-[#162032] border border-[#202D45] hover:border-cyan-400 text-slate-300 hover:text-cyan-200 px-2.5 py-1 rounded-lg transition-colors text-left"
                             >
                               {fu}
                             </button>
@@ -445,7 +451,7 @@ export default function AssistantPage() {
                   </div>
 
                   {msg.role === "user" && (
-                    <div className="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center shrink-0 mt-0.5 text-slate-600">
+                    <div className="w-8 h-8 rounded-xl bg-[#162032] border border-[#202D45] flex items-center justify-center shrink-0 mt-0.5 text-slate-300">
                       <User className="w-4 h-4" />
                     </div>
                   )}
@@ -455,11 +461,11 @@ export default function AssistantPage() {
 
             {isSending && (
               <div className="flex gap-3 justify-start">
-                <div className="w-7 h-7 rounded-full bg-primary-100 flex items-center justify-center shrink-0 mt-0.5 text-primary-600">
+                <div className="w-8 h-8 rounded-xl bg-cyan-950/60 border border-cyan-500/30 flex items-center justify-center shrink-0 mt-0.5 text-cyan-400">
                   <Bot className="w-4 h-4" />
                 </div>
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-500 flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-primary-600 animate-ping" />
+                <div className="bg-[#0E1524] border border-[#202D45] rounded-2xl p-3 text-xs text-slate-300 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
                   <span>Synthesizing evidence-based financial insights...</span>
                 </div>
               </div>
@@ -468,7 +474,7 @@ export default function AssistantPage() {
           </div>
 
           {/* Input Bar */}
-          <div className="p-3 border-t border-slate-200 bg-white">
+          <div className="p-3 border-t border-[#202D45] bg-[#0A0F1D]">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -478,7 +484,7 @@ export default function AssistantPage() {
             >
               <Input
                 type="text"
-                placeholder="Ask a question about your portfolio, cash flow, emergency fund, or goals..."
+                placeholder="Ask about cash flow, emergency funds, portfolio rebalancing, or news impact..."
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 disabled={isSending}
@@ -486,16 +492,18 @@ export default function AssistantPage() {
               />
               <Button
                 type="submit"
+                variant="primary"
                 size="sm"
                 isLoading={isSending}
                 disabled={!inputText.trim()}
+                className="gap-1.5"
               >
-                <Send className="w-4 h-4 mr-1" />
+                <Send className="w-3.5 h-3.5" />
                 Send
               </Button>
             </form>
             <p className="text-[10px] text-slate-400 text-center mt-1.5">
-              Financial guidance is for educational and decision support only. AI cannot execute trades.
+              Financial guidance is for educational and decision support only. The system cannot execute trades.
             </p>
           </div>
         </Card>
@@ -513,9 +521,9 @@ export default function AssistantPage() {
           <div className="space-y-4 text-xs">
             {/* Score header */}
             {healthReport.health_score !== undefined && (
-              <div className="flex items-center justify-between p-3 bg-primary-50 rounded-lg border border-primary-100">
-                <span className="font-semibold text-primary-900">Aggregate Financial Health Score:</span>
-                <span className="text-xl font-bold text-primary-700">
+              <div className="flex items-center justify-between p-3.5 bg-cyan-950/40 border border-cyan-500/30 rounded-xl">
+                <span className="font-semibold text-white">Aggregate Financial Health Score:</span>
+                <span className="text-xl font-mono font-extrabold text-cyan-300">
                   {healthReport.health_score} / 100
                 </span>
               </div>
@@ -523,8 +531,8 @@ export default function AssistantPage() {
 
             {/* Executive summary */}
             <div>
-              <h4 className="font-semibold text-slate-800 mb-1">Executive Summary</h4>
-              <p className="text-slate-600 leading-relaxed bg-slate-50 p-3 rounded border border-slate-200">
+              <h4 className="font-semibold text-white mb-1.5">Executive Summary</h4>
+              <p className="text-slate-300 leading-relaxed bg-[#0A0F1D] p-3.5 rounded-xl border border-[#202D45]">
                 {healthReport.executive_summary}
               </p>
             </div>
@@ -532,14 +540,14 @@ export default function AssistantPage() {
             {/* Domain breakdown */}
             {healthReport.domain_insights && (
               <div className="space-y-2">
-                <h4 className="font-semibold text-slate-800">Domain Findings</h4>
+                <h4 className="font-semibold text-white">Domain Findings</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {Object.entries(healthReport.domain_insights).map(([domain, text]) => (
-                    <div key={domain} className="p-2.5 rounded border border-slate-200 bg-white">
-                      <span className="font-semibold text-slate-700 capitalize block mb-0.5">
+                    <div key={domain} className="p-3 rounded-xl border border-[#202D45] bg-[#0A0F1D]">
+                      <span className="font-semibold text-cyan-300 capitalize block mb-1">
                         {domain.replace("_", " ")}
                       </span>
-                      <p className="text-slate-600 text-[11px]">{text}</p>
+                      <p className="text-slate-400 text-[11px] leading-relaxed">{text}</p>
                     </div>
                   ))}
                 </div>
@@ -548,7 +556,7 @@ export default function AssistantPage() {
 
             {/* Warnings */}
             {healthReport.warnings && healthReport.warnings.length > 0 && (
-              <div className="bg-amber-50 p-2.5 rounded border border-amber-200 text-amber-800 space-y-1">
+              <div className="bg-amber-950/40 p-3 rounded-xl border border-amber-500/30 text-amber-300 space-y-1">
                 <span className="font-semibold block">Attention Required:</span>
                 {healthReport.warnings.map((w, i) => (
                   <div key={i}>• {w}</div>
@@ -557,13 +565,13 @@ export default function AssistantPage() {
             )}
 
             <div className="flex justify-end pt-2">
-              <Button size="sm" onClick={() => setShowReportModal(false)}>
+              <Button size="sm" variant="outline" onClick={() => setShowReportModal(false)}>
                 Close Report
               </Button>
             </div>
           </div>
         ) : (
-          <div className="text-center py-4 text-xs text-slate-500">
+          <div className="text-center py-4 text-xs text-slate-400">
             Unable to load health report.
           </div>
         )}
@@ -577,13 +585,13 @@ export default function AssistantPage() {
       >
         <form onSubmit={handleRunScenario} className="space-y-4 text-xs">
           <div>
-            <label className="block font-medium text-slate-700 mb-1">
+            <label className="block font-semibold text-slate-300 mb-1.5 uppercase tracking-wider text-[11px]">
               Select Scenario Type
             </label>
             <select
               value={scenarioType}
               onChange={(e) => setScenarioType(e.target.value as any)}
-              className="w-full text-xs rounded border border-slate-300 bg-white p-2 text-slate-800"
+              className="w-full text-xs rounded-lg border border-[#202D45] bg-[#0E1524] p-2.5 text-white font-medium focus:outline-none focus:ring-1 focus:ring-cyan-500"
             >
               <option value="expense">Major Unplanned Expense (Medical / Home / Auto)</option>
               <option value="income_reduction">Income Reduction (Job Transition / 30% Pay Cut)</option>
@@ -599,14 +607,14 @@ export default function AssistantPage() {
             required
           />
 
-          <Button type="submit" size="sm" className="w-full" isLoading={isEvaluatingScenario}>
+          <Button type="submit" variant="primary" size="sm" className="w-full" isLoading={isEvaluatingScenario}>
             Simulate Impact
           </Button>
 
           {scenarioResult && (
-            <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2 mt-3">
-              <h4 className="font-semibold text-slate-800">Simulation Output:</h4>
-              <p className="text-slate-600 leading-relaxed">
+            <div className="p-3.5 bg-[#0A0F1D] border border-cyan-500/30 rounded-xl space-y-2 mt-3">
+              <h4 className="font-semibold text-cyan-300">Simulation Output:</h4>
+              <p className="text-slate-300 leading-relaxed">
                 {scenarioResult.explanation || scenarioResult.impact_summary || JSON.stringify(scenarioResult)}
               </p>
             </div>

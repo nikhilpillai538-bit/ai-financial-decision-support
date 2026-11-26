@@ -73,28 +73,28 @@ export default function EmergencyFundPage() {
     return <LoadingState message="Analyzing emergency liquidity reserves..." />;
   }
 
-  const coverageMonths = parseFloat(analysis?.current_coverage_months || "0");
+  const coverageMonths = parseFloat(analysis?.months_of_coverage || analysis?.current_coverage_months || "0");
   const isTargetAchieved = coverageMonths >= 6;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#1A263D]">
         <div>
-          <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
             Emergency Fund Analysis
           </h1>
-          <p className="text-base text-slate-500 dark:text-slate-400 mt-1.5 font-medium">
-            Evaluate liquidity reserves against 3-month and 6-month essential living costs
+          <p className="text-xs sm:text-sm text-slate-400 mt-1 font-medium">
+            Evaluate liquidity reserves against 3-month and 6-month essential living costs.
           </p>
         </div>
         <Button
           variant="outline"
-          size="md"
+          size="sm"
           onClick={() => setIsModalOpen(true)}
-          className="gap-2 shadow-xs"
+          className="gap-1.5 border-[#202D45] text-slate-300 hover:text-white"
         >
-          <Edit2 className="w-4 h-4" />
+          <Edit2 className="w-3.5 h-3.5 text-cyan-400" />
           <span>Update Savings & Expenses</span>
         </Button>
       </div>
@@ -107,7 +107,7 @@ export default function EmergencyFundPage() {
           title="Current Liquid Savings"
           value={formatCurrency(analysis?.emergency_fund_balance || analysis?.available_liquid_savings, "INR")}
           subtitle="Available for emergency liquidity"
-          icon={<DollarSign className="w-5 h-5" />}
+          icon={<DollarSign className="w-5 h-5 text-cyan-400" />}
           variant="brand"
         />
 
@@ -115,7 +115,7 @@ export default function EmergencyFundPage() {
           title="Monthly Essential Expenses"
           value={formatCurrency(analysis?.average_monthly_essential_expenses || analysis?.monthly_essential_expenses, "INR")}
           subtitle="Rent, groceries, utilities & healthcare"
-          icon={<TrendingUp className="w-5 h-5" />}
+          icon={<TrendingUp className="w-5 h-5 text-slate-300" />}
           variant="default"
         />
 
@@ -129,7 +129,7 @@ export default function EmergencyFundPage() {
               : "—"
           }
           subtitle={`Status: ${String(analysis?.status || analysis?.balance_status || "unknown").toUpperCase()}`}
-          icon={<ShieldCheck className="w-5 h-5" />}
+          icon={<ShieldCheck className="w-5 h-5 text-emerald-400" />}
           variant={coverageMonths >= 6 ? "success" : coverageMonths >= 3 ? "default" : "danger"}
         />
 
@@ -141,7 +141,7 @@ export default function EmergencyFundPage() {
               : formatCurrency(analysis?.shortfall_six_month || analysis?.shortfall_6_months, "INR")
           }
           subtitle={`Target: ${formatCurrency(analysis?.six_month_target || analysis?.recommended_target_6_months, "INR")}`}
-          icon={isTargetAchieved ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+          icon={isTargetAchieved ? <CheckCircle2 className="w-5 h-5 text-emerald-400" /> : <AlertCircle className="w-5 h-5 text-amber-400" />}
           variant={isTargetAchieved ? "success" : "warning"}
         />
       </div>
@@ -159,35 +159,35 @@ export default function EmergencyFundPage() {
             Target 1: 3 months minimal buffer ({formatCurrency(analysis?.recommended_target_3_months, "INR")}) | Target 2: 6 months comfortable buffer ({formatCurrency(analysis?.recommended_target_6_months, "INR")})
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-5">
           <div className="space-y-2">
-            <div className="flex justify-between text-xs font-semibold">
-              <span>Runway: {analysis?.current_coverage_months || "0"} months</span>
-              <span>Goal: 6.0 months</span>
+            <div className="flex justify-between text-xs font-mono font-bold text-slate-300">
+              <span>Runway: {coverageMonths.toFixed(1)} months</span>
+              <span className="text-cyan-400">Target Goal: 6.0 months</span>
             </div>
-            <div className="h-4 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex">
+            <div className="h-4 w-full bg-[#0D1422] border border-[#1E2B42] rounded-full overflow-hidden flex p-0.5">
               <div
                 style={{ width: `${Math.min(100, (coverageMonths / 6) * 100)}%` }}
                 className={`h-full transition-all rounded-full ${
                   coverageMonths >= 6
-                    ? "bg-emerald-500"
+                    ? "bg-gradient-to-r from-emerald-500 to-teal-400"
                     : coverageMonths >= 3
-                    ? "bg-amber-500"
-                    : "bg-rose-500"
+                    ? "bg-gradient-to-r from-amber-500 to-amber-400"
+                    : "bg-gradient-to-r from-rose-500 to-rose-400"
                 }`}
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-            <div className="p-3.5 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 space-y-1">
-              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <div className="p-4 rounded-xl border border-[#202D45] bg-[#0E1524] space-y-1">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                 3-Month Target (Minimal Buffer)
               </span>
-              <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
+              <p className="text-xl font-bold font-mono text-white">
                 {formatCurrency(analysis?.recommended_target_3_months, "INR")}
               </p>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs font-medium text-slate-400 font-mono">
                 Shortfall:{" "}
                 {parseFloat(analysis?.shortfall_3_months || "0") <= 0
                   ? "₹0.00 (Target Met)"
@@ -195,14 +195,14 @@ export default function EmergencyFundPage() {
               </p>
             </div>
 
-            <div className="p-3.5 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 space-y-1">
-              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <div className="p-4 rounded-xl border border-[#202D45] bg-[#0E1524] space-y-1">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                 6-Month Target (Comfortable Buffer)
               </span>
-              <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
+              <p className="text-xl font-bold font-mono text-white">
                 {formatCurrency(analysis?.recommended_target_6_months, "INR")}
               </p>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs font-medium text-slate-400 font-mono">
                 Shortfall:{" "}
                 {parseFloat(analysis?.shortfall_6_months || "0") <= 0
                   ? "₹0.00 (Target Met)"
@@ -217,14 +217,15 @@ export default function EmergencyFundPage() {
       {analysis?.recommendations && analysis.recommendations.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm">Strategic Recommendations</CardTitle>
+            <CardTitle>Strategic Liquidity Recommendations</CardTitle>
+            <CardDescription>Automated rules-based guidance on buffer adequacy</CardDescription>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-400">
+            <ul className="space-y-2.5 text-xs sm:text-sm text-slate-300">
               {analysis.recommendations.map((rec, idx) => (
-                <li key={idx} className="flex items-start gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 shrink-0 mt-1.5" />
-                  <span>{rec}</span>
+                <li key={idx} className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0 mt-2" />
+                  <span className="leading-relaxed">{rec}</span>
                 </li>
               ))}
             </ul>

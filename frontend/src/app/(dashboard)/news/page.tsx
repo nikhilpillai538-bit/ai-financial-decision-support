@@ -161,28 +161,33 @@ export default function NewsIntelligencePage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fadeIn">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#202D45] pb-6">
         <div>
-          <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900">
-            Market Intelligence & FinBERT Sentiment
-          </h1>
-          <p className="text-base text-slate-500 mt-1.5 font-medium">
-            Natural language financial news processing, sentiment distributions, and portfolio theme mapping.
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+              Market Intelligence & FinBERT Sentiment
+            </h1>
+            <Badge variant="cyan" className="font-mono text-[10px] uppercase tracking-wider">
+              NLP Sentiment Pipeline
+            </Badge>
+          </div>
+          <p className="text-sm text-slate-400 mt-1.5 font-normal">
+            Real-time financial news ingestion, transformer-based polarity scoring, and portfolio exposure correlation.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           {/* Time window toggles */}
-          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl text-sm font-bold">
+          <div className="flex items-center bg-[#0E1524] p-1 rounded-xl border border-[#202D45] text-xs font-semibold">
             {(["24h", "7d", "30d"] as const).map((tw) => (
               <button
                 key={tw}
                 onClick={() => setTimeWindow(tw)}
-                className={`px-4 py-1.5 rounded-lg transition-all ${
+                className={`px-3 py-1.5 rounded-lg transition-all ${
                   timeWindow === tw
-                    ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-sm font-bold"
-                    : "text-slate-500 hover:text-slate-900 dark:text-slate-400"
+                    ? "bg-[#162032] text-cyan-300 border border-cyan-500/30 shadow-glow-cyan font-bold"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
                 {tw.toUpperCase()}
@@ -195,8 +200,9 @@ export default function NewsIntelligencePage() {
             size="md"
             onClick={handleRefreshFeeds}
             isLoading={isRefreshing}
+            className="gap-1.5"
           >
-            <RefreshCw className="w-4 h-4 mr-1.5" />
+            <RefreshCw className="w-4 h-4" />
             Refresh Feeds
           </Button>
         </div>
@@ -204,9 +210,9 @@ export default function NewsIntelligencePage() {
 
       {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
       {refreshMessage && (
-        <div className="p-3 bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 rounded-lg flex items-center justify-between">
+        <div className="p-3 bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-300 rounded-xl flex items-center justify-between">
           <span>{refreshMessage}</span>
-          <button onClick={() => setRefreshMessage(null)} className="text-emerald-700 font-bold ml-2">×</button>
+          <button onClick={() => setRefreshMessage(null)} className="text-emerald-400 font-bold ml-2">×</button>
         </div>
       )}
 
@@ -217,33 +223,37 @@ export default function NewsIntelligencePage() {
             <MetricCard
               title="Articles Processed"
               value={summary.total_articles.toString()}
-              icon={<Newspaper className="w-4 h-4 text-primary-600" />}
+              icon={<Newspaper className="w-4 h-4" />}
               subtitle={`Window: ${summary.time_window}`}
+              variant="default"
             />
             <MetricCard
               title="Positive / Bullish"
               value={`${summary.positive_count} (${(summary.positive_percentage * 100).toFixed(1)}%)`}
-              icon={<TrendingUp className="w-4 h-4 text-emerald-600" />}
+              icon={<TrendingUp className="w-4 h-4" />}
               subtitle="FinBERT positive classification"
+              variant="success"
             />
             <MetricCard
               title="Negative / Bearish"
               value={`${summary.negative_count} (${(summary.negative_percentage * 100).toFixed(1)}%)`}
-              icon={<AlertTriangle className="w-4 h-4 text-rose-600" />}
+              icon={<AlertTriangle className="w-4 h-4" />}
               subtitle="FinBERT negative classification"
+              variant="danger"
             />
             <MetricCard
               title="Net Market Sentiment"
               value={summary.overall_sentiment_label.toUpperCase()}
-              icon={<BarChart2 className="w-4 h-4 text-blue-600" />}
+              icon={<BarChart2 className="w-4 h-4" />}
               subtitle={`Score: ${summary.average_sentiment_score > 0 ? "+" : ""}${summary.average_sentiment_score.toFixed(3)}`}
+              variant="cyan"
             />
           </div>
 
           {/* Sentiment Distribution Bar Card */}
           <Card>
             <CardHeader className="py-3">
-              <CardTitle className="text-sm font-semibold text-slate-800">
+              <CardTitle className="text-sm font-semibold text-white">
                 Market Sentiment Distribution ({summary.time_window.toUpperCase()})
               </CardTitle>
             </CardHeader>
@@ -256,7 +266,7 @@ export default function NewsIntelligencePage() {
                 overallLabel={summary.overall_sentiment_label}
               />
               {summary.warnings && summary.warnings.length > 0 && (
-                <div className="mt-3 text-xs text-amber-700 bg-amber-50 p-2 rounded border border-amber-200">
+                <div className="mt-3 text-xs text-amber-300 bg-amber-950/30 p-2.5 rounded-lg border border-amber-500/30">
                   {summary.warnings.join(" ")}
                 </div>
               )}
@@ -273,11 +283,11 @@ export default function NewsIntelligencePage() {
             <CardHeader>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-amber-500" />
-                    Portfolio News Themes & Impact
+                  <CardTitle className="text-base text-white flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-cyan-400" />
+                    Portfolio News Themes & Exposure Impact
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-xs text-slate-400">
                     Contextual mapping of news stories to your asset holdings.
                   </CardDescription>
                 </div>
@@ -285,7 +295,7 @@ export default function NewsIntelligencePage() {
                   <select
                     value={selectedPortfolioId}
                     onChange={(e) => setSelectedPortfolioId(e.target.value)}
-                    className="text-xs rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-slate-800 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                    className="text-xs rounded-lg border border-[#202D45] bg-[#0E1524] px-2.5 py-1.5 text-white focus:outline-none focus:ring-1 focus:ring-cyan-500 font-medium"
                   >
                     <option value="">All Portfolios / Aggregate</option>
                     {portfolios.map((p) => (
@@ -297,15 +307,15 @@ export default function NewsIntelligencePage() {
                 )}
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 text-xs">
               {isLoadingInsights ? (
                 <LoadingState message="Correlating news feeds to portfolio holdings..." />
               ) : insights ? (
                 <>
                   {/* Executive Summary */}
                   {insights.executive_summary && (
-                    <div className="bg-primary-50/60 border border-primary-100 rounded-lg p-3 text-xs text-slate-700 leading-relaxed">
-                      <strong className="text-primary-900 block mb-1">Portfolio Synthesis:</strong>
+                    <div className="bg-[#0A0F1D] border border-cyan-500/30 rounded-xl p-3.5 text-xs text-slate-300 leading-relaxed">
+                      <strong className="text-cyan-300 block mb-1">Portfolio Synthesis:</strong>
                       {insights.executive_summary}
                     </div>
                   )}
@@ -316,10 +326,10 @@ export default function NewsIntelligencePage() {
                       {insights.themes.map((theme, idx) => (
                         <div
                           key={idx}
-                          className="border border-slate-200 rounded-lg p-3 space-y-2 bg-white"
+                          className="border border-[#202D45] rounded-xl p-3.5 space-y-2 bg-[#0A0F1D]"
                         >
                           <div className="flex items-center justify-between gap-2">
-                            <h4 className="text-xs font-semibold text-slate-900">
+                            <h4 className="text-xs font-bold text-white">
                               {theme.theme_title}
                             </h4>
                             <Badge
@@ -334,14 +344,14 @@ export default function NewsIntelligencePage() {
                               {theme.sentiment.toUpperCase()}
                             </Badge>
                           </div>
-                          <p className="text-xs text-slate-600">
+                          <p className="text-xs text-slate-400 leading-relaxed">
                             {theme.relevance_to_portfolio}
                           </p>
 
                           {/* Referenced articles */}
                           {theme.articles && theme.articles.length > 0 && (
-                            <div className="pt-2 border-t border-slate-100 space-y-1">
-                              <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">
+                            <div className="pt-2 border-t border-[#202D45] space-y-1">
+                              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
                                 Supporting Headlines:
                               </span>
                               {theme.articles.map((art, aIdx) => (
@@ -350,12 +360,12 @@ export default function NewsIntelligencePage() {
                                   href={art.canonical_url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-xs text-primary-600 hover:text-primary-800 hover:underline flex items-center gap-1 truncate"
+                                  className="text-xs text-cyan-400 hover:text-cyan-300 hover:underline flex items-center gap-1 truncate"
                                 >
                                   <ExternalLink className="w-3 h-3 shrink-0" />
                                   <span className="truncate">{art.title}</span>
                                   {art.source_name && (
-                                    <span className="text-slate-400 text-[10px] shrink-0">
+                                    <span className="text-slate-400 text-[10px] shrink-0 font-mono">
                                       ({art.source_name})
                                     </span>
                                   )}
@@ -367,13 +377,13 @@ export default function NewsIntelligencePage() {
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-6 text-xs text-slate-500">
+                    <div className="text-center py-6 text-xs text-slate-400">
                       No direct news theme clusters detected for this portfolio in the current window.
                     </div>
                   )}
                 </>
               ) : (
-                <div className="text-center py-6 text-xs text-slate-500">
+                <div className="text-center py-6 text-xs text-slate-400">
                   Select a portfolio to see news insights.
                 </div>
               )}
@@ -384,44 +394,44 @@ export default function NewsIntelligencePage() {
           {relevance && relevance.matches && relevance.matches.length > 0 && (
             <Card>
               <CardHeader className="py-3">
-                <CardTitle className="text-xs font-semibold text-slate-700 flex items-center gap-2">
-                  <Layers className="w-4 h-4 text-slate-500" />
+                <CardTitle className="text-xs font-semibold text-slate-300 flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-cyan-400" />
                   Portfolio Asset Mentions ({relevance.matches.length})
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <div className="overflow-x-auto max-h-56 overflow-y-auto">
                   <table className="w-full text-xs text-left">
-                    <thead className="bg-slate-50 text-slate-500 border-y border-slate-200">
+                    <thead className="bg-[#0A0F1D] text-slate-400 border-y border-[#202D45] uppercase tracking-wider font-semibold text-[11px]">
                       <tr>
-                        <th className="px-3 py-2 font-medium">Asset / Ticker</th>
-                        <th className="px-3 py-2 font-medium">Article</th>
-                        <th className="px-3 py-2 font-medium">Sentiment</th>
-                        <th className="px-3 py-2 font-medium text-right">Confidence</th>
+                        <th className="px-3.5 py-2 font-medium">Asset / Ticker</th>
+                        <th className="px-3.5 py-2 font-medium">Article</th>
+                        <th className="px-3.5 py-2 font-medium">Sentiment</th>
+                        <th className="px-3.5 py-2 font-medium text-right">Confidence</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-[#202D45]">
                       {relevance.matches.map((m, idx) => (
-                        <tr key={idx} className="hover:bg-slate-50/50">
-                          <td className="px-3 py-2 font-semibold text-slate-900">
+                        <tr key={idx} className="hover:bg-[#162032]/40 transition-colors">
+                          <td className="px-3.5 py-2.5 font-mono font-bold text-white">
                             {m.matched_entity}
                             <span className="text-[10px] text-slate-400 block font-normal capitalize">
                               {m.entity_type}
                             </span>
                           </td>
-                          <td className="px-3 py-2 max-w-xs truncate">
+                          <td className="px-3.5 py-2.5 max-w-xs truncate">
                             <a
                               href={m.canonical_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-primary-600 hover:underline flex items-center gap-1 truncate"
+                              className="text-cyan-400 hover:text-cyan-300 hover:underline flex items-center gap-1 truncate"
                             >
                               <span className="truncate">{m.article_title}</span>
                               <ExternalLink className="w-3 h-3 shrink-0 text-slate-400" />
                             </a>
-                            <span className="text-[10px] text-slate-400">{m.source_name}</span>
+                            <span className="text-[10px] text-slate-400 font-mono">{m.source_name}</span>
                           </td>
-                          <td className="px-3 py-2">
+                          <td className="px-3.5 py-2.5">
                             <Badge
                               variant={
                                 m.sentiment_label === "positive"
@@ -434,7 +444,7 @@ export default function NewsIntelligencePage() {
                               {m.sentiment_label || "neutral"}
                             </Badge>
                           </td>
-                          <td className="px-3 py-2 text-right font-medium text-slate-600">
+                          <td className="px-3.5 py-2.5 text-right font-mono font-bold text-slate-300">
                             {(m.match_confidence * 100).toFixed(0)}%
                           </td>
                         </tr>
@@ -451,20 +461,20 @@ export default function NewsIntelligencePage() {
         <div className="space-y-6">
           <Card>
             <CardHeader className="py-3">
-              <CardTitle className="text-sm font-semibold text-slate-800">
+              <CardTitle className="text-sm font-semibold text-white">
                 Sector Sentiment Breakdown
               </CardTitle>
-              <CardDescription className="text-xs">
+              <CardDescription className="text-xs text-slate-400">
                 FinBERT aggregation by economic sector.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
               {summary && summary.sector_breakdown && summary.sector_breakdown.length > 0 ? (
-                <div className="divide-y divide-slate-100">
+                <div className="divide-y divide-[#202D45]">
                   {summary.sector_breakdown.map((sec, idx) => (
-                    <div key={idx} className="p-3 text-xs space-y-1.5 hover:bg-slate-50/50">
+                    <div key={idx} className="p-3 text-xs space-y-1.5 hover:bg-[#162032]/30 transition-colors">
                       <div className="flex items-center justify-between">
-                        <span className="font-semibold text-slate-800 capitalize">
+                        <span className="font-semibold text-white capitalize">
                           {sec.sector}
                         </span>
                         <Badge
@@ -475,26 +485,27 @@ export default function NewsIntelligencePage() {
                               ? "danger"
                               : "outline"
                           }
+                          className="font-mono text-[10px]"
                         >
                           {sec.net_sentiment_score > 0 ? "+" : ""}
                           {sec.net_sentiment_score.toFixed(2)}
                         </Badge>
                       </div>
-                      <div className="flex items-center justify-between text-[11px] text-slate-500">
+                      <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
                         <span>{sec.article_count} articles</span>
                         <span>
-                          <strong className="text-emerald-600">{(sec.positive_percentage * 100).toFixed(0)}% +</strong> /{" "}
-                          <strong className="text-rose-600">{(sec.negative_percentage * 100).toFixed(0)}% -</strong>
+                          <strong className="text-emerald-400">{(sec.positive_percentage * 100).toFixed(0)}% +</strong> /{" "}
+                          <strong className="text-rose-400">{(sec.negative_percentage * 100).toFixed(0)}% -</strong>
                         </span>
                       </div>
                       {/* Mini bar */}
-                      <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden flex">
+                      <div className="h-1.5 w-full bg-[#0A0F1D] border border-[#202D45] rounded-full overflow-hidden flex">
                         <div
                           className="bg-emerald-500 h-full"
                           style={{ width: `${sec.positive_percentage * 100}%` }}
                         />
                         <div
-                          className="bg-slate-300 h-full"
+                          className="bg-slate-600 h-full"
                           style={{ width: `${sec.neutral_percentage * 100}%` }}
                         />
                         <div
@@ -520,11 +531,11 @@ export default function NewsIntelligencePage() {
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <CardTitle className="text-base flex items-center gap-2">
-                <Newspaper className="w-4 h-4 text-slate-600" />
+              <CardTitle className="text-base text-white flex items-center gap-2">
+                <Newspaper className="w-4 h-4 text-cyan-400" />
                 Financial Headlines & Ingested Stories ({totalArticles})
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs text-slate-400">
                 Verified news feed articles scored by the FinBERT sentiment model.
               </CardDescription>
             </div>
@@ -541,13 +552,13 @@ export default function NewsIntelligencePage() {
                 />
                 <button
                   type="submit"
-                  className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600"
+                  className="absolute right-2.5 top-2.5 text-slate-400 hover:text-white"
                 >
                   <Search className="w-3.5 h-3.5" />
                 </button>
               </form>
 
-              <div className="flex items-center bg-slate-100 p-0.5 rounded-lg text-xs">
+              <div className="flex items-center bg-[#0E1524] p-0.5 rounded-lg border border-[#202D45] text-xs">
                 {(["all", "positive", "negative", "neutral"] as const).map((label) => (
                   <button
                     key={label}
@@ -557,8 +568,8 @@ export default function NewsIntelligencePage() {
                     }}
                     className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
                       sentimentFilter === label
-                        ? "bg-white text-slate-900 shadow-sm font-semibold"
-                        : "text-slate-600 hover:text-slate-900"
+                        ? "bg-[#162032] text-cyan-300 font-bold"
+                        : "text-slate-400 hover:text-white"
                     }`}
                   >
                     {label.charAt(0).toUpperCase() + label.slice(1)}
@@ -570,25 +581,25 @@ export default function NewsIntelligencePage() {
         </CardHeader>
         <CardContent className="p-0">
           {articles.length === 0 ? (
-            <div className="p-8 text-center text-xs text-slate-500">
+            <div className="p-8 text-center text-xs text-slate-400">
               No news articles found matching the current criteria. Click &ldquo;Refresh Feeds&rdquo; to fetch the latest headlines.
             </div>
           ) : (
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-[#202D45]">
               {articles.map((art) => (
                 <div
                   key={art.id}
-                  className="p-4 hover:bg-slate-50/60 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+                  className="p-4 hover:bg-[#162032]/30 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
                 >
-                  <div className="space-y-1 max-w-3xl">
+                  <div className="space-y-1.5 max-w-3xl">
                     <div className="flex items-center gap-2 flex-wrap">
                       {art.source_name && (
-                        <span className="font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded text-[11px]">
+                        <span className="font-semibold text-cyan-300 bg-cyan-950/60 border border-cyan-500/20 px-2 py-0.5 rounded text-[10px] font-mono">
                           {art.source_name}
                         </span>
                       )}
                       {art.published_at && (
-                        <span className="text-slate-400 text-[11px]">
+                        <span className="text-slate-400 text-[11px] font-mono">
                           {formatDate(art.published_at)}
                         </span>
                       )}
@@ -597,12 +608,12 @@ export default function NewsIntelligencePage() {
                       href={art.canonical_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-medium text-slate-900 hover:text-primary-600 hover:underline block text-sm"
+                      className="font-medium text-white hover:text-cyan-300 hover:underline block text-sm transition-colors"
                     >
                       {art.title}
                     </a>
                     {art.summary && (
-                      <p className="text-slate-500 line-clamp-2 text-xs">
+                      <p className="text-slate-400 line-clamp-2 text-xs leading-relaxed">
                         {art.summary}
                       </p>
                     )}
@@ -621,7 +632,7 @@ export default function NewsIntelligencePage() {
                       {art.sentiment_label ? art.sentiment_label.toUpperCase() : "UNSCORED"}
                     </Badge>
                     {art.sentiment_score && (
-                      <span className="text-[11px] text-slate-400">
+                      <span className="text-[11px] text-slate-400 font-mono">
                         Conf: {(parseFloat(art.sentiment_score) * 100).toFixed(0)}%
                       </span>
                     )}
@@ -633,7 +644,7 @@ export default function NewsIntelligencePage() {
 
           {/* Pagination */}
           {totalArticles > pageSize && (
-            <div className="p-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <div className="p-3.5 border-t border-[#202D45] flex items-center justify-between text-xs text-slate-400 font-mono">
               <span>
                 Showing {page * pageSize + 1}–{Math.min((page + 1) * pageSize, totalArticles)} of {totalArticles}
               </span>

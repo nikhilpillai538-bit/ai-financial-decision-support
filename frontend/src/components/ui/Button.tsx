@@ -25,21 +25,21 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const variants = {
       primary:
-        "bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold shadow-md shadow-indigo-600/30 focus-visible:ring-indigo-500",
+        "bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 active:from-cyan-600 active:to-teal-600 text-slate-950 font-extrabold shadow-md shadow-cyan-950/30 focus-visible:ring-cyan-400 border border-cyan-300/30",
       secondary:
-        "bg-slate-100 text-slate-800 hover:bg-slate-200 active:bg-slate-300 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 focus-visible:ring-slate-400 font-semibold",
+        "bg-[#182336] text-slate-200 hover:bg-[#202E47] active:bg-[#151F30] border border-[#273855] focus-visible:ring-slate-400 font-semibold",
       outline:
-        "border-2 border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800 focus-visible:ring-slate-400 font-semibold",
+        "border border-[#273855] text-slate-300 hover:border-cyan-500/60 hover:text-cyan-300 hover:bg-cyan-950/30 focus-visible:ring-cyan-400 font-semibold",
       danger:
-        "bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-bold shadow-md shadow-rose-600/30 focus-visible:ring-rose-500",
+        "bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-bold shadow-md shadow-rose-950/40 focus-visible:ring-rose-400 border border-rose-400/30",
       ghost:
-        "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 focus-visible:ring-slate-400 font-semibold",
+        "text-slate-400 hover:bg-slate-800/60 hover:text-white focus-visible:ring-slate-400 font-semibold",
     };
 
     const sizes = {
-      sm: "px-3.5 py-2 text-xs font-semibold rounded-lg",
-      md: "px-5 py-2.5 text-sm font-semibold rounded-xl",
-      lg: "px-6 py-3.5 text-base font-bold rounded-xl",
+      sm: "px-3.5 py-1.5 text-xs font-semibold rounded-lg gap-1.5",
+      md: "px-4.5 py-2.5 text-xs sm:text-sm font-semibold rounded-xl gap-2",
+      lg: "px-6 py-3.5 text-sm sm:text-base font-bold rounded-xl gap-2.5",
     };
 
     return (
@@ -47,14 +47,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || isLoading}
         className={cn(
-          "inline-flex items-center justify-center transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none select-none cursor-pointer active:scale-[0.98]",
+          "inline-flex items-center justify-center transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#090D16] disabled:opacity-50 disabled:pointer-events-none select-none cursor-pointer active:scale-[0.98]",
           variants[variant],
           sizes[size],
           className
         )}
         {...props}
       >
-        {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+        {isLoading && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
         {children}
       </button>
     );

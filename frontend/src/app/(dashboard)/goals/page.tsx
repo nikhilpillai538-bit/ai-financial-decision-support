@@ -9,6 +9,9 @@ import {
   ArrowRight,
   TrendingUp,
   Trash2,
+  Sparkles,
+  Layers,
+  Percent,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -89,6 +92,8 @@ export default function GoalsPage() {
       setGoalName("");
       setGoalTargetAmount("");
       setGoalTargetDate("");
+      setGoalCurrentAmount("0");
+      setGoalPlannedSip("0");
       await fetchGoals();
     } catch (err: any) {
       alert(`Error creating goal: ${err?.detail || err?.message}`);
@@ -155,22 +160,27 @@ export default function GoalsPage() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fadeIn">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#202D45] pb-6">
         <div>
-          <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
-            Investment Goals & SIP Calculators
-          </h1>
-          <p className="text-base text-slate-500 dark:text-slate-400 mt-1.5 font-medium">
-            Track milestones, calculate forward and reverse SIP requirements, and plan glide paths
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+              Investment Goals & SIP Calculators
+            </h1>
+            <Badge variant="cyan" className="font-mono text-[10px] uppercase tracking-wider">
+              Planning Engine
+            </Badge>
+          </div>
+          <p className="text-sm text-slate-400 mt-1.5 font-normal">
+            Track milestone progress, run forward and reverse compound SIP projections, and simulate asset glide paths.
           </p>
         </div>
         <Button
           variant="primary"
           size="md"
           onClick={() => setIsGoalModalOpen(true)}
-          className="gap-2 shadow-md shadow-indigo-600/20"
+          className="gap-2 shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>New Investment Goal</span>
@@ -181,10 +191,15 @@ export default function GoalsPage() {
 
       {/* Goals List Section */}
       <div className="space-y-4">
-        <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2.5">
-          <Target className="w-5 h-5 text-indigo-600" />
-          <span>Active Investment Goals</span>
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-white flex items-center gap-2.5">
+            <Target className="w-5 h-5 text-cyan-400" />
+            <span>Active Financial Milestones</span>
+          </h2>
+          <span className="text-xs font-mono text-slate-400">
+            {goals.length} {goals.length === 1 ? "Goal Configured" : "Goals Configured"}
+          </span>
+        </div>
 
         {loading ? (
           <LoadingState message="Fetching active investment goals..." />
@@ -192,10 +207,10 @@ export default function GoalsPage() {
           <EmptyState
             title="No investment goals yet"
             description="Create your first goal (e.g. Retirement, Child Education, Down Payment) to track monthly SIP requirements."
-            icon={<Target className="w-8 h-8" />}
+            icon={<Target className="w-8 h-8 text-cyan-400" />}
             action={
               <Button variant="primary" size="sm" onClick={() => setIsGoalModalOpen(true)}>
-                Create Goal
+                Create First Goal
               </Button>
             }
           />
@@ -207,41 +222,46 @@ export default function GoalsPage() {
               const progressPct = Math.min(100, Math.round((current / target) * 100));
 
               return (
-                <Card key={g.id} className="flex flex-col justify-between">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <CardTitle className="text-sm font-bold truncate max-w-[180px]">
+                <Card key={g.id} className="relative flex flex-col justify-between overflow-hidden group hover:border-cyan-500/40 transition-all duration-200">
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 via-teal-400 to-transparent" />
+                  <CardHeader className="pb-3 pt-5">
+                    <div className="flex items-start justify-between gap-2">
+                      <CardTitle className="text-sm font-bold text-white truncate max-w-[200px]">
                         {g.name}
                       </CardTitle>
                       <button
                         onClick={() => handleDeleteGoal(g.id)}
-                        className="text-slate-400 hover:text-rose-600 p-1 transition-colors"
+                        className="text-slate-500 hover:text-rose-400 p-1 rounded-md hover:bg-rose-500/10 transition-colors"
                         title="Delete Goal"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
-                    <CardDescription>Target Date: {formatDate(g.target_date)}</CardDescription>
+                    <CardDescription className="text-xs text-slate-400">
+                      Target Date: <span className="font-mono text-slate-300">{formatDate(g.target_date)}</span>
+                    </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-3 text-xs">
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-slate-500">
-                        <span>Progress: {progressPct}%</span>
-                        <span className="font-semibold text-slate-900 dark:text-slate-100">
-                          {formatCurrency(g.current_amount, "INR")} / {formatCurrency(g.target_amount, "INR")}
-                        </span>
+                  <CardContent className="space-y-4 text-xs">
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-slate-400">
+                        <span className="font-medium">Progress</span>
+                        <span className="font-mono font-bold text-cyan-400">{progressPct}%</span>
                       </div>
-                      <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-2 w-full bg-[#0A0F1D] border border-[#202D45] rounded-full overflow-hidden">
                         <div
                           style={{ width: `${progressPct}%` }}
-                          className="h-full bg-indigo-600 rounded-full transition-all"
+                          className="h-full bg-gradient-to-r from-cyan-500 to-teal-400 rounded-full transition-all duration-500"
                         />
+                      </div>
+                      <div className="flex justify-between font-mono text-[11px] text-slate-400 pt-0.5">
+                        <span>Funded: <strong className="text-white">{formatCurrency(g.current_amount, "INR")}</strong></span>
+                        <span>Goal: <strong className="text-slate-300">{formatCurrency(g.target_amount, "INR")}</strong></span>
                       </div>
                     </div>
 
-                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-[11px] text-slate-500">
-                      <span>Planned Monthly SIP:</span>
-                      <span className="font-semibold text-indigo-600">
+                    <div className="pt-3 border-t border-[#202D45] flex justify-between items-center text-xs">
+                      <span className="text-slate-400">Planned Monthly SIP:</span>
+                      <span className="font-mono font-bold text-teal-300">
                         {formatCurrency(g.planned_monthly_contribution, "INR")}
                       </span>
                     </div>
@@ -256,18 +276,18 @@ export default function GoalsPage() {
       {/* SIP Calculators Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
         {/* Forward SIP Calculator */}
-        <Card>
+        <Card className="flex flex-col">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Calculator className="w-4 h-4 text-indigo-600" />
-              <CardTitle className="text-base">Forward SIP Calculator</CardTitle>
+              <Calculator className="w-4 h-4 text-cyan-400" />
+              <CardTitle className="text-base text-white">Forward SIP Projection Calculator</CardTitle>
             </div>
-            <CardDescription>
-              Calculate future wealth gain from regular monthly investments
+            <CardDescription className="text-slate-400 text-xs">
+              Project compound terminal wealth and total return with optional annual step-up.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <form onSubmit={handleCalculateForwardSIP} className="space-y-3">
+          <CardContent className="space-y-5 flex-1 flex flex-col justify-between">
+            <form onSubmit={handleCalculateForwardSIP} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <Input
                   label="Monthly SIP (INR)"
@@ -318,49 +338,51 @@ export default function GoalsPage() {
             </form>
 
             {fSipResult && (
-              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-3">
+              <div className="pt-4 border-t border-[#202D45] space-y-4">
                 <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="p-2 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
-                    <span className="text-[10px] text-slate-500 uppercase block">Total Invested</span>
-                    <strong className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                  <div className="p-2.5 bg-[#0A0F1D] border border-[#202D45] rounded-xl">
+                    <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-medium">Invested</span>
+                    <strong className="text-xs font-mono font-bold text-white block mt-0.5">
                       {formatCurrency(fSipResult.total_invested, "INR")}
                     </strong>
                   </div>
-                  <div className="p-2 bg-emerald-50 dark:bg-emerald-950/40 rounded-lg">
-                    <span className="text-[10px] text-emerald-600 uppercase block">Wealth Gain</span>
-                    <strong className="text-xs font-bold text-emerald-700 dark:text-emerald-400">
+                  <div className="p-2.5 bg-[#0A0F1D] border border-emerald-500/20 rounded-xl">
+                    <span className="text-[10px] text-emerald-400 uppercase tracking-wider block font-medium">Wealth Gain</span>
+                    <strong className="text-xs font-mono font-bold text-emerald-400 block mt-0.5">
                       {formatCurrency(fSipResult.estimated_returns, "INR")}
                     </strong>
                   </div>
-                  <div className="p-2 bg-indigo-50 dark:bg-indigo-950/40 rounded-lg">
-                    <span className="text-[10px] text-indigo-600 uppercase block">Total Future Value</span>
-                    <strong className="text-xs font-bold text-indigo-700 dark:text-indigo-400">
+                  <div className="p-2.5 bg-[#0A0F1D] border border-cyan-500/20 rounded-xl">
+                    <span className="text-[10px] text-cyan-400 uppercase tracking-wider block font-medium">Future Value</span>
+                    <strong className="text-xs font-mono font-bold text-cyan-300 block mt-0.5">
                       {formatCurrency(fSipResult.future_value, "INR")}
                     </strong>
                   </div>
                 </div>
 
-                <SIPGrowthChart schedule={fSipResult.schedule} height={200} currency="INR" />
+                <div className="bg-[#0A0F1D] border border-[#202D45] rounded-xl p-3">
+                  <SIPGrowthChart schedule={fSipResult.schedule} height={200} currency="INR" />
+                </div>
               </div>
             )}
           </CardContent>
         </Card>
 
         {/* Reverse SIP Calculator */}
-        <Card>
+        <Card className="flex flex-col">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-indigo-600" />
-              <CardTitle className="text-base">Reverse SIP Calculator</CardTitle>
+              <TrendingUp className="w-4 h-4 text-teal-400" />
+              <CardTitle className="text-base text-white">Reverse SIP Target Solver</CardTitle>
             </div>
-            <CardDescription>
-              Determine the exact monthly investment required to reach a specific financial target
+            <CardDescription className="text-slate-400 text-xs">
+              Determine the exact monthly capital required to reach a specific financial target corpus.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <form onSubmit={handleCalculateReverseSIP} className="space-y-3">
+          <CardContent className="space-y-5 flex-1 flex flex-col justify-between">
+            <form onSubmit={handleCalculateReverseSIP} className="space-y-4">
               <Input
-                label="Target Amount (INR)"
+                label="Target Corpus Amount (INR)"
                 type="number"
                 step="10000"
                 min="10000"
@@ -398,22 +420,22 @@ export default function GoalsPage() {
             </form>
 
             {rSipResult && (
-              <div className="p-4 rounded-xl bg-indigo-50/70 border border-indigo-100 dark:bg-indigo-950/40 dark:border-indigo-800 space-y-2">
+              <div className="p-4 rounded-xl bg-[#0A0F1D] border border-cyan-500/30 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-indigo-900 dark:text-indigo-300">
+                  <span className="text-xs font-medium text-slate-300">
                     Required Monthly Contribution:
                   </span>
-                  <span className="text-lg font-bold text-indigo-700 dark:text-indigo-300">
+                  <span className="text-lg font-mono font-extrabold text-cyan-300">
                     {formatCurrency(rSipResult.required_monthly_investment, "INR")}/mo
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-xs text-indigo-800 dark:text-indigo-400 pt-1 border-t border-indigo-100 dark:border-indigo-800">
+                <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-[#202D45]">
                   <span>Total Capital Outlay:</span>
-                  <span className="font-semibold">{formatCurrency(rSipResult.total_invested, "INR")}</span>
+                  <span className="font-mono font-semibold text-white">{formatCurrency(rSipResult.total_invested, "INR")}</span>
                 </div>
-                <div className="flex items-center justify-between text-xs text-indigo-800 dark:text-indigo-400">
+                <div className="flex items-center justify-between text-xs text-slate-400">
                   <span>Compounded Interest Generated:</span>
-                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                  <span className="font-mono font-semibold text-emerald-400">
                     {formatCurrency(rSipResult.estimated_returns, "INR")}
                   </span>
                 </div>
@@ -426,16 +448,16 @@ export default function GoalsPage() {
       {/* Glide Path Section */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <Compass className="w-4 h-4 text-indigo-600" />
-              <CardTitle className="text-base">Risk-Aware Investment Glide Path</CardTitle>
+              <Compass className="w-4 h-4 text-cyan-400" />
+              <CardTitle className="text-base text-white">Risk-Aware Investment Glide Path</CardTitle>
             </div>
             <div className="flex items-center gap-2">
               <select
                 value={glideYears}
                 onChange={(e) => setGlideYears(e.target.value)}
-                className="px-2.5 py-1 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200"
+                className="px-3 py-1.5 text-xs bg-[#0E1524] border border-[#202D45] rounded-lg text-slate-200 focus:outline-none focus:ring-1 focus:ring-cyan-500 font-mono"
               >
                 <option value="5">5 Years Horizon</option>
                 <option value="10">10 Years Horizon</option>
@@ -447,41 +469,41 @@ export default function GoalsPage() {
               </Button>
             </div>
           </div>
-          <CardDescription>
-            Systematic derisking schedule that progressively shifts asset allocation from equities toward debt and cash
+          <CardDescription className="text-slate-400 text-xs">
+            Systematic derisking schedule that progressively shifts asset allocation from equities toward debt and cash as the horizon nears.
           </CardDescription>
         </CardHeader>
         <CardContent>
           {glideMilestones.length === 0 ? (
-            <div className="py-6 text-center text-xs text-slate-400">
-              Select an investment horizon and click &quot;Generate Milestones&quot; to preview asset allocation transitions.
+            <div className="py-8 text-center text-xs text-slate-400 bg-[#0A0F1D] border border-dashed border-[#202D45] rounded-xl">
+              Select an investment horizon and click &ldquo;Generate Milestones&rdquo; to preview asset allocation transitions.
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
               {glideMilestones.map((m, idx) => (
                 <div
                   key={idx}
-                  className="p-3.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 space-y-2"
+                  className="p-3.5 rounded-xl border border-[#202D45] bg-[#0A0F1D] space-y-2.5"
                 >
-                  <div className="flex justify-between items-center text-xs font-bold text-slate-900 dark:text-slate-100">
-                    <span>{m.years_to_horizon} Yrs Remaining</span>
-                    <Badge variant="outline">Stage {idx + 1}</Badge>
+                  <div className="flex justify-between items-center text-xs font-bold text-white">
+                    <span className="font-mono">{m.years_to_horizon} Yrs Remaining</span>
+                    <Badge variant="cyan" className="text-[10px]">Stage {idx + 1}</Badge>
                   </div>
-                  <div className="space-y-1 text-xs">
-                    <div className="flex justify-between text-indigo-600 font-semibold">
+                  <div className="space-y-1.5 text-xs font-mono">
+                    <div className="flex justify-between text-cyan-400">
                       <span>Equity:</span>
-                      <span>{formatPercentage(parseFloat(m.equity_weight) * 100)}</span>
+                      <span className="font-bold">{formatPercentage(parseFloat(m.equity_weight) * 100)}</span>
                     </div>
-                    <div className="flex justify-between text-sky-600 font-semibold">
+                    <div className="flex justify-between text-teal-400">
                       <span>Debt:</span>
-                      <span>{formatPercentage(parseFloat(m.debt_weight) * 100)}</span>
+                      <span className="font-bold">{formatPercentage(parseFloat(m.debt_weight) * 100)}</span>
                     </div>
-                    <div className="flex justify-between text-emerald-600 font-semibold">
+                    <div className="flex justify-between text-emerald-400">
                       <span>Cash:</span>
-                      <span>{formatPercentage(parseFloat(m.cash_weight) * 100)}</span>
+                      <span className="font-bold">{formatPercentage(parseFloat(m.cash_weight) * 100)}</span>
                     </div>
                   </div>
-                  <p className="text-[10px] text-slate-400 leading-tight pt-1">{m.description}</p>
+                  <p className="text-[10px] text-slate-400 leading-tight pt-1 border-t border-[#202D45]">{m.description}</p>
                 </div>
               ))}
             </div>
@@ -496,7 +518,7 @@ export default function GoalsPage() {
         title="Create Investment Goal"
         description="Configure target amount, horizon, and monthly contribution"
       >
-        <form onSubmit={handleCreateGoal} className="space-y-4">
+        <form onSubmit={handleCreateGoal} className="space-y-4 text-xs">
           <Input
             label="Goal Name"
             placeholder="e.g. Retirement Corpus, Down Payment"

@@ -20,8 +20,8 @@ export default function RootPage() {
   }, [isLoading, isAuthenticated, router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
-      <LoadingState message="Loading application..." />
+    <div className="min-h-screen flex items-center justify-center bg-[#090D16]">
+      <LoadingState message="Directing to secure fintech command center..." />
     </div>
   );
 }

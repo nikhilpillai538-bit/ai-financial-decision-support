@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,20 +6,34 @@
 
 @layer base {
   :root {
+    --background: #0d131f;
+    --foreground: #f1f5f9;
+    --card: #121927;
+    --card-foreground: #f8fafc;
+    --border: #22314e;
+    --accent: #06b6d4;
+  }
+
+  .light {
     --background: #f8fafc;
     --foreground: #0f172a;
+    --card: #ffffff;
+    --card-foreground: #0f172a;
+    --border: #e2e8f0;
+    --accent: #0891b2;
   }
 
   * {
-    border-color: #e2e8f0;
+    border-color: rgba(255, 255, 255, 0.08);
   }
 
   body {
-    background-color: var(--background);
-    color: var(--foreground);
+    background-color: #090d16;
+    color: #f1f5f9;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
   }
 
   code, kbd, samp, pre {
@@ -27,21 +41,60 @@
   }
 }
 
-/* Custom modern scrollbars */
+/* Accessible reduced-motion handling */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom sleek fintech scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(15, 23, 42, 0.6);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #24324d;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #3b5074;
+}
+
+/* Fintech Glow & Surface Utilities */
+.fintech-glass {
+  background: rgba(18, 25, 39, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.fintech-card-gradient {
+  background: radial-gradient(100% 100% at 50% 0%, rgba(6, 182, 212, 0.05) 0%, rgba(18, 25, 39, 0) 100%), #121927;
+}
+
+.fintech-glow-border {
+  position: relative;
+}
+
+.fintech-glow-border::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #06b6d4, #14b8a6, transparent);
+  border-radius: 9999px;
 }

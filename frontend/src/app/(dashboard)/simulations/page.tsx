@@ -21,6 +21,7 @@ import {
   Sparkles,
   TrendingDown,
   TrendingUp,
+  Cpu,
 } from "lucide-react";
 import {
   Area,
@@ -134,10 +135,6 @@ export default function SimulationsPage() {
     loadInitial();
   }, []);
 
-  // -------------------------------------------------------------------------
-  // Handlers
-  // -------------------------------------------------------------------------
-
   const handleRunStressTest = async () => {
     setStressLoading(true);
     setStressError(null);
@@ -249,69 +246,69 @@ export default function SimulationsPage() {
   return (
     <div className="space-y-8 animate-fadeIn pb-12">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#202D45] pb-6">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">
-              Stress Testing & Simulations
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+              Stress Testing & Quantitative Simulations
             </h1>
-            <Badge variant="outline" className="border-indigo-500/30 text-indigo-600 dark:text-indigo-400 font-bold">
-              Phase 13
+            <Badge variant="cyan" className="font-mono text-[10px] uppercase tracking-wider">
+              Simulation Lab
             </Badge>
           </div>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Deterministic crisis shock modeling, historical portfolio backtesting, stochastic Monte Carlo projections, and multi-scenario trade-off analysis.
+          <p className="text-sm text-slate-400 mt-1.5 font-normal">
+            Crisis shock modeling, look-ahead free historical backtesting, Geometric Brownian Motion Monte Carlo projections, and what-if scenarios.
           </p>
         </div>
       </div>
 
       {/* Workspace Tabs Navigation */}
-      <div className="flex flex-wrap gap-2 p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-xs">
+      <div className="flex flex-wrap gap-2 p-1.5 rounded-xl bg-[#0E1524] border border-[#202D45]">
         <button
           onClick={() => setActiveTab("stress")}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${
             activeTab === "stress"
-              ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-md shadow-slate-200/50 dark:shadow-none"
-              : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+              ? "bg-[#162032] text-cyan-300 border border-cyan-500/30 shadow-glow-cyan"
+              : "text-slate-400 hover:text-white"
           }`}
         >
-          <Activity className="w-4 h-4" />
+          <Activity className="w-3.5 h-3.5" />
           Macro Stress Testing
         </button>
 
         <button
           onClick={() => setActiveTab("backtest")}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${
             activeTab === "backtest"
-              ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-md shadow-slate-200/50 dark:shadow-none"
-              : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+              ? "bg-[#162032] text-cyan-300 border border-cyan-500/30 shadow-glow-cyan"
+              : "text-slate-400 hover:text-white"
           }`}
         >
-          <History className="w-4 h-4" />
+          <History className="w-3.5 h-3.5" />
           Historical Backtesting
         </button>
 
         <button
           onClick={() => setActiveTab("monte_carlo")}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${
             activeTab === "monte_carlo"
-              ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-md shadow-slate-200/50 dark:shadow-none"
-              : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+              ? "bg-[#162032] text-cyan-300 border border-cyan-500/30 shadow-glow-cyan"
+              : "text-slate-400 hover:text-white"
           }`}
         >
-          <Sparkles className="w-4 h-4" />
+          <Sparkles className="w-3.5 h-3.5" />
           Monte Carlo Simulator
         </button>
 
         <button
           onClick={() => setActiveTab("scenarios")}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${
             activeTab === "scenarios"
-              ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-md shadow-slate-200/50 dark:shadow-none"
-              : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+              ? "bg-[#162032] text-cyan-300 border border-cyan-500/30 shadow-glow-cyan"
+              : "text-slate-400 hover:text-white"
           }`}
         >
-          <Layers className="w-4 h-4" />
+          <Layers className="w-3.5 h-3.5" />
           Goal Scenario Comparison
         </button>
       </div>
@@ -321,26 +318,26 @@ export default function SimulationsPage() {
       {/* ==================================================================== */}
       {activeTab === "stress" && (
         <div className="space-y-6">
-          <Card className="border-slate-200/80 dark:border-slate-800/80 shadow-fintech">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-xl flex items-center gap-2">
-                <Activity className="w-5 h-5 text-indigo-600" />
+              <CardTitle className="text-base text-white flex items-center gap-2">
+                <Activity className="w-4 h-4 text-cyan-400" />
                 Configure Macro Stress Scenario
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs text-slate-400">
                 Simulate instantaneous shocks across asset classes without relying on historical correlations.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase">
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
                     Target Portfolio
                   </label>
                   <select
                     value={selectedPortfolioId}
                     onChange={(e) => setSelectedPortfolioId(e.target.value)}
-                    className="w-full h-11 px-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-semibold"
+                    className="w-full h-10 px-3 rounded-lg border border-[#202D45] bg-[#0E1524] text-white font-medium focus:outline-none focus:ring-1 focus:ring-cyan-500"
                   >
                     {portfolios.map((p) => (
                       <option key={p.id} value={p.id}>
@@ -354,13 +351,13 @@ export default function SimulationsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase">
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
                     Macro Shock Preset
                   </label>
                   <select
                     value={selectedScenario}
                     onChange={(e) => setSelectedScenario(e.target.value)}
-                    className="w-full h-11 px-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-semibold"
+                    className="w-full h-10 px-3 rounded-lg border border-[#202D45] bg-[#0E1524] text-white font-medium focus:outline-none focus:ring-1 focus:ring-cyan-500"
                   >
                     {presets.map((pr) => (
                       <option key={pr.id} value={pr.id}>
@@ -383,7 +380,8 @@ export default function SimulationsPage() {
                   <Button
                     onClick={handleRunStressTest}
                     disabled={stressLoading}
-                    className="w-full h-11 font-bold text-sm bg-indigo-600 hover:bg-indigo-700 text-white"
+                    variant="primary"
+                    className="w-full h-10"
                   >
                     {stressLoading ? (
                       <RefreshCw className="w-4 h-4 animate-spin mr-2" />
@@ -396,8 +394,8 @@ export default function SimulationsPage() {
               </div>
 
               {stressError && (
-                <div className="mt-4 p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 flex items-center gap-3 text-rose-700 dark:text-rose-300 text-sm">
-                  <AlertCircle className="w-5 h-5 shrink-0" />
+                <div className="mt-4 p-3 rounded-xl bg-rose-950/40 border border-rose-500/30 flex items-center gap-2.5 text-rose-300 text-xs">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
                   <span>{stressError}</span>
                 </div>
               )}
@@ -412,41 +410,41 @@ export default function SimulationsPage() {
                   title="Baseline Value"
                   value={formatCurrency(stressResult.baseline_portfolio_value)}
                   subtitle="Pre-shock portfolio valuation"
-                  icon={<Coins className="w-5 h-5" />}
+                  icon={<Coins className="w-4 h-4" />}
                   variant="default"
                 />
                 <MetricCard
                   title="Post-Shock Value"
                   value={formatCurrency(stressResult.stressed_portfolio_value)}
                   subtitle="Estimated value after crisis"
-                  icon={<TrendingDown className="w-5 h-5" />}
+                  icon={<TrendingDown className="w-4 h-4" />}
                   variant={parseFloat(stressResult.absolute_change) < 0 ? "danger" : "success"}
                 />
                 <MetricCard
                   title="Estimated Net Loss"
                   value={formatCurrency(stressResult.absolute_change)}
                   subtitle="Absolute dollar variance"
-                  icon={<ArrowDownRight className="w-5 h-5" />}
+                  icon={<ArrowDownRight className="w-4 h-4" />}
                   variant={parseFloat(stressResult.absolute_change) < 0 ? "danger" : "success"}
                 />
                 <MetricCard
                   title="Portfolio Contraction"
                   value={formatPercentage(stressResult.percentage_change)}
-                  subtitle="Total percentage draw"
-                  icon={<Activity className="w-5 h-5" />}
+                  subtitle="Total percentage drawdown"
+                  icon={<Activity className="w-4 h-4" />}
                   variant={parseFloat(stressResult.percentage_change) < 0 ? "danger" : "success"}
                 />
               </div>
 
               {/* Asset Class Loss Contribution Chart & Table */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card className="border-slate-200/80 dark:border-slate-800/80">
+                <Card>
                   <CardHeader>
-                    <CardTitle className="text-base font-bold flex items-center gap-2">
-                      <BarChart3 className="w-4 h-4 text-indigo-600" />
+                    <CardTitle className="text-base text-white flex items-center gap-2">
+                      <BarChart3 className="w-4 h-4 text-cyan-400" />
                       Loss Contribution by Asset Class
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-xs text-slate-400">
                       Share of total portfolio loss generated by each asset category
                     </CardDescription>
                   </CardHeader>
@@ -461,56 +459,56 @@ export default function SimulationsPage() {
                           }))}
                           margin={{ top: 10, right: 10, left: -20, bottom: 20 }}
                         >
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.2} />
-                          <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                          <YAxis tick={{ fontSize: 11 }} unit="%" />
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#202D45" />
+                          <XAxis dataKey="name" tick={{ fontSize: 10, fill: "#94a3b8" }} />
+                          <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} unit="%" />
                           <Tooltip
                             formatter={(val: any) => [`${val}%`, "Contribution to Total Loss"]}
-                            contentStyle={{ backgroundColor: "#0f172a", borderColor: "#334155", borderRadius: 12, color: "#fff" }}
+                            contentStyle={{ backgroundColor: "#0E1524", borderColor: "#202D45", borderRadius: 8, color: "#fff", fontSize: 12 }}
                           />
-                          <Bar dataKey="lossContribution" fill="#6366f1" radius={[6, 6, 0, 0]} />
+                          <Bar dataKey="lossContribution" fill="#06B6D4" radius={[4, 4, 0, 0]} />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="border-slate-200/80 dark:border-slate-800/80">
+                <Card>
                   <CardHeader>
-                    <CardTitle className="text-base font-bold flex items-center gap-2">
-                      <Layers className="w-4 h-4 text-indigo-600" />
+                    <CardTitle className="text-base text-white flex items-center gap-2">
+                      <Layers className="w-4 h-4 text-cyan-400" />
                       Asset Class Shift Breakdown
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-xs text-slate-400">
                       Weight migration resulting from uneven asset class contractions
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
                     <div className="overflow-x-auto">
                       <table className="w-full text-xs text-left">
-                        <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 font-bold uppercase tracking-wider text-slate-500">
+                        <thead className="bg-[#0A0F1D] text-slate-400 border-b border-[#202D45] uppercase tracking-wider font-semibold">
                           <tr>
-                            <th className="px-4 py-3">Asset Class</th>
-                            <th className="px-4 py-3 text-right">Shock %</th>
-                            <th className="px-4 py-3 text-right">Base Wt</th>
-                            <th className="px-4 py-3 text-right">Stressed Wt</th>
-                            <th className="px-4 py-3 text-right">Variance</th>
+                            <th className="px-4 py-2.5">Asset Class</th>
+                            <th className="px-4 py-2.5 text-right">Shock %</th>
+                            <th className="px-4 py-2.5 text-right">Base Wt</th>
+                            <th className="px-4 py-2.5 text-right">Stressed Wt</th>
+                            <th className="px-4 py-2.5 text-right">Variance</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
+                        <tbody className="divide-y divide-[#202D45] font-mono">
                           {stressResult.asset_class_breakdown.map((ac, idx) => (
-                            <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
-                              <td className="px-4 py-3 font-bold capitalize text-slate-900 dark:text-slate-100">
+                            <tr key={idx} className="hover:bg-[#162032]/30">
+                              <td className="px-4 py-2.5 font-bold capitalize text-white font-sans">
                                 {ac.asset_class.replace("_", " ")}
                               </td>
-                              <td className="px-4 py-3 text-right font-mono text-rose-600 dark:text-rose-400 font-bold">
+                              <td className="px-4 py-2.5 text-right text-rose-400 font-bold">
                                 {ac.shock_percentage}%
                               </td>
-                              <td className="px-4 py-3 text-right font-mono">{ac.baseline_weight_pct}%</td>
-                              <td className="px-4 py-3 text-right font-mono font-bold text-indigo-600 dark:text-indigo-400">
+                              <td className="px-4 py-2.5 text-right text-slate-300">{ac.baseline_weight_pct}%</td>
+                              <td className="px-4 py-2.5 text-right font-bold text-cyan-300">
                                 {ac.stressed_weight_pct}%
                               </td>
-                              <td className="px-4 py-3 text-right font-mono font-bold text-slate-600 dark:text-slate-400">
+                              <td className="px-4 py-2.5 text-right text-slate-400">
                                 {formatCurrency(ac.absolute_change)}
                               </td>
                             </tr>
@@ -523,43 +521,43 @@ export default function SimulationsPage() {
               </div>
 
               {/* Holdings Breakdown Table */}
-              <Card className="border-slate-200/80 dark:border-slate-800/80 overflow-hidden">
+              <Card className="overflow-hidden">
                 <CardHeader>
-                  <CardTitle className="text-base font-bold">Granular Holdings Stress Impact</CardTitle>
+                  <CardTitle className="text-base text-white">Granular Holdings Stress Impact</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs text-left">
-                      <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 font-bold uppercase tracking-wider text-slate-500">
+                      <thead className="bg-[#0A0F1D] text-slate-400 border-b border-[#202D45] uppercase tracking-wider font-semibold">
                         <tr>
-                          <th className="px-4 py-3">Symbol / Name</th>
-                          <th className="px-4 py-3">Asset Class</th>
-                          <th className="px-4 py-3 text-right">Base Value</th>
-                          <th className="px-4 py-3 text-right">Shock %</th>
-                          <th className="px-4 py-3 text-right">Stressed Value</th>
-                          <th className="px-4 py-3 text-right">Impact</th>
-                          <th className="px-4 py-3 text-right">Loss Share</th>
+                          <th className="px-4 py-2.5">Symbol / Name</th>
+                          <th className="px-4 py-2.5">Asset Class</th>
+                          <th className="px-4 py-2.5 text-right">Base Value</th>
+                          <th className="px-4 py-2.5 text-right">Shock %</th>
+                          <th className="px-4 py-2.5 text-right">Stressed Value</th>
+                          <th className="px-4 py-2.5 text-right">Impact</th>
+                          <th className="px-4 py-2.5 text-right">Loss Share</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
+                      <tbody className="divide-y divide-[#202D45] font-mono">
                         {stressResult.holdings_breakdown.map((h, idx) => (
-                          <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
-                            <td className="px-4 py-3 font-bold text-slate-900 dark:text-slate-100">
+                          <tr key={idx} className="hover:bg-[#162032]/30">
+                            <td className="px-4 py-2.5 font-bold text-white font-sans">
                               {h.symbol}
-                              <span className="block text-[11px] text-slate-400 font-normal">{h.asset_name}</span>
+                              <span className="block text-[10px] text-slate-400 font-normal">{h.asset_name}</span>
                             </td>
-                            <td className="px-4 py-3 capitalize">{h.asset_class.replace("_", " ")}</td>
-                            <td className="px-4 py-3 text-right font-mono">{formatCurrency(h.baseline_value)}</td>
-                            <td className="px-4 py-3 text-right font-mono font-bold text-rose-600 dark:text-rose-400">
+                            <td className="px-4 py-2.5 capitalize text-slate-300 font-sans">{h.asset_class.replace("_", " ")}</td>
+                            <td className="px-4 py-2.5 text-right text-slate-300">{formatCurrency(h.baseline_value)}</td>
+                            <td className="px-4 py-2.5 text-right text-rose-400 font-bold">
                               {h.shock_percentage}%
                             </td>
-                            <td className="px-4 py-3 text-right font-mono font-bold">
+                            <td className="px-4 py-2.5 text-right font-bold text-white">
                               {formatCurrency(h.stressed_value)}
                             </td>
-                            <td className="px-4 py-3 text-right font-mono text-rose-600 dark:text-rose-400">
+                            <td className="px-4 py-2.5 text-right text-rose-400">
                               {formatCurrency(h.absolute_change)}
                             </td>
-                            <td className="px-4 py-3 text-right font-mono font-bold text-slate-700 dark:text-slate-300">
+                            <td className="px-4 py-2.5 text-right text-slate-300">
                               {h.contribution_to_loss_pct}%
                             </td>
                           </tr>
@@ -572,21 +570,21 @@ export default function SimulationsPage() {
 
               {/* Warnings and Disclaimers */}
               {stressResult.warnings.length > 0 && (
-                <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 space-y-1">
-                  <div className="flex items-center gap-2 font-bold text-xs text-amber-800 dark:text-amber-300">
+                <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-500/30 space-y-1">
+                  <div className="flex items-center gap-2 font-bold text-xs text-amber-300">
                     <AlertTriangle className="w-4 h-4" />
                     Data Quality Warnings
                   </div>
                   {stressResult.warnings.map((w, i) => (
-                    <p key={i} className="text-xs text-amber-700 dark:text-amber-400">
+                    <p key={i} className="text-xs text-amber-400">
                       • {w}
                     </p>
                   ))}
                 </div>
               )}
 
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 space-y-1">
-                <p className="font-bold text-slate-700 dark:text-slate-300">Model Assumptions & Disclaimers:</p>
+              <div className="p-4 rounded-xl bg-[#0A0F1D] border border-[#202D45] text-xs text-slate-400 space-y-1">
+                <p className="font-bold text-slate-300">Model Assumptions & Disclaimers:</p>
                 <p>• {stressResult.assumptions.join(" • ")}</p>
                 <p className="italic">Notice: {stressResult.disclaimers.join(" ")}</p>
               </div>
@@ -597,8 +595,11 @@ export default function SimulationsPage() {
             <EmptyState
               title="No Stress Test Executed Yet"
               description="Choose a portfolio and scenario preset above and click 'Execute Stress Test' to analyze crisis resilience."
-              actionLabel="Run Default Stress Test"
-              onAction={handleRunStressTest}
+              action={
+                <Button variant="primary" size="sm" onClick={handleRunStressTest}>
+                  Run Default Stress Test
+                </Button>
+              }
             />
           )}
         </div>
@@ -609,26 +610,26 @@ export default function SimulationsPage() {
       {/* ==================================================================== */}
       {activeTab === "backtest" && (
         <div className="space-y-6">
-          <Card className="border-slate-200/80 dark:border-slate-800/80 shadow-fintech">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-xl flex items-center gap-2">
-                <History className="w-5 h-5 text-indigo-600" />
+              <CardTitle className="text-base text-white flex items-center gap-2">
+                <History className="w-4 h-4 text-cyan-400" />
                 Configure Historical Backtest
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs text-slate-400">
                 Replay historical asset allocations without look-ahead bias, applying periodic rebalancing and turnover fees.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase">
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
                     Portfolio
                   </label>
                   <select
                     value={btPortfolioId}
                     onChange={(e) => setBtPortfolioId(e.target.value)}
-                    className="w-full h-11 px-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-semibold"
+                    className="w-full h-10 px-3 rounded-lg border border-[#202D45] bg-[#0E1524] text-white font-medium focus:outline-none focus:ring-1 focus:ring-cyan-500"
                   >
                     {portfolios.map((p) => (
                       <option key={p.id} value={p.id}>
@@ -640,10 +641,8 @@ export default function SimulationsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase">
-                    Starting Capital (₹)
-                  </label>
                   <Input
+                    label="Starting Capital (₹)"
                     type="number"
                     value={btInitialVal}
                     onChange={(e) => setBtInitialVal(e.target.value)}
@@ -652,13 +651,13 @@ export default function SimulationsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase">
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
                     Rebalance Schedule
                   </label>
                   <select
                     value={btRebalFreq}
                     onChange={(e) => setBtRebalFreq(e.target.value)}
-                    className="w-full h-11 px-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-semibold"
+                    className="w-full h-10 px-3 rounded-lg border border-[#202D45] bg-[#0E1524] text-white font-medium focus:outline-none focus:ring-1 focus:ring-cyan-500"
                   >
                     <option value="monthly">Monthly Rebalancing</option>
                     <option value="quarterly">Quarterly Rebalancing</option>
@@ -669,10 +668,8 @@ export default function SimulationsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase">
-                    Turnover Fee (bps)
-                  </label>
                   <Input
+                    label="Turnover Fee (bps)"
                     type="number"
                     value={btFeeBps}
                     onChange={(e) => setBtFeeBps(e.target.value)}
@@ -685,7 +682,8 @@ export default function SimulationsPage() {
                 <Button
                   onClick={handleRunBacktest}
                   disabled={btLoading || portfolios.length === 0}
-                  className="h-11 px-6 font-bold text-sm bg-indigo-600 hover:bg-indigo-700 text-white"
+                  variant="primary"
+                  size="md"
                 >
                   {btLoading ? (
                     <RefreshCw className="w-4 h-4 animate-spin mr-2" />
@@ -697,8 +695,8 @@ export default function SimulationsPage() {
               </div>
 
               {btError && (
-                <div className="mt-4 p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 flex items-center gap-3 text-rose-700 dark:text-rose-300 text-sm">
-                  <AlertCircle className="w-5 h-5 shrink-0" />
+                <div className="mt-4 p-3 rounded-xl bg-rose-950/40 border border-rose-500/30 flex items-center gap-2.5 text-rose-300 text-xs">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
                   <span>{btError}</span>
                 </div>
               )}
@@ -716,15 +714,16 @@ export default function SimulationsPage() {
                   variant={parseFloat(btResult.cumulative_return_pct) >= 0 ? "success" : "danger"}
                 />
                 <MetricCard
-                  title="CAGR (Annualized)"
+                  title="CAGR"
                   value={formatPercentage(btResult.annualized_return_cagr_pct)}
-                  subtitle="Compound annual growth rate"
-                  variant="brand"
+                  subtitle="Compound annual growth"
+                  variant="cyan"
                 />
                 <MetricCard
                   title="Annualized Volatility"
                   value={formatPercentage(btResult.annualized_volatility_pct)}
                   subtitle="Trading standard deviation"
+                  variant="warning"
                 />
                 <MetricCard
                   title="Max Drawdown"
@@ -735,20 +734,20 @@ export default function SimulationsPage() {
                 <MetricCard
                   title="Sharpe Ratio"
                   value={btResult.sharpe_ratio}
-                  subtitle={`Risk-adjusted (Calmar: ${btResult.calmar_ratio})`}
+                  subtitle={`Calmar: ${btResult.calmar_ratio}`}
                   variant="success"
                 />
               </div>
 
               {/* Equity Curve Chart */}
-              <Card className="border-slate-200/80 dark:border-slate-800/80 shadow-fintech">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="text-base font-bold flex items-center justify-between">
+                  <CardTitle className="text-base text-white flex items-center justify-between">
                     <span className="flex items-center gap-2">
-                      <LineChartIcon className="w-4 h-4 text-indigo-600" />
-                      Backtest Equity Curve &amp; Drawdown Area
+                      <LineChartIcon className="w-4 h-4 text-cyan-400" />
+                      Backtest Equity Curve
                     </span>
-                    <Badge variant="outline" className="font-mono text-xs">
+                    <Badge variant="cyan" className="font-mono text-xs">
                       {btResult.trading_days} Trading Days
                     </Badge>
                   </CardTitle>
@@ -759,24 +758,24 @@ export default function SimulationsPage() {
                       <AreaChart data={btResult.equity_curve} margin={{ top: 10, right: 10, left: 10, bottom: 20 }}>
                         <defs>
                           <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4} />
-                            <stop offset="95%" stopColor="#6366f1" stopOpacity={0.0} />
+                            <stop offset="5%" stopColor="#06B6D4" stopOpacity={0.35} />
+                            <stop offset="95%" stopColor="#06B6D4" stopOpacity={0.0} />
                           </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.2} />
-                        <XAxis dataKey="date" tick={{ fontSize: 10 }} />
-                        <YAxis tick={{ fontSize: 10 }} domain={["auto", "auto"]} />
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#202D45" />
+                        <XAxis dataKey="date" tick={{ fontSize: 10, fill: "#94a3b8" }} />
+                        <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} domain={["auto", "auto"]} />
                         <Tooltip
                           formatter={(val: any, name: any) => [
                             name === "portfolio_value" ? formatCurrency(val) : `${val}%`,
                             name === "portfolio_value" ? "Portfolio Value" : "Drawdown",
                           ]}
-                          contentStyle={{ backgroundColor: "#0f172a", borderColor: "#334155", borderRadius: 12, color: "#fff" }}
+                          contentStyle={{ backgroundColor: "#0E1524", borderColor: "#202D45", borderRadius: 8, color: "#fff", fontSize: 12 }}
                         />
                         <Area
                           type="monotone"
                           dataKey="portfolio_value"
-                          stroke="#6366f1"
+                          stroke="#06B6D4"
                           strokeWidth={2.5}
                           fillOpacity={1}
                           fill="url(#equityGrad)"
@@ -790,11 +789,11 @@ export default function SimulationsPage() {
 
               {/* Rebalance Events Table */}
               {btResult.rebalance_events.length > 0 && (
-                <Card className="border-slate-200/80 dark:border-slate-800/80">
+                <Card>
                   <CardHeader>
-                    <CardTitle className="text-base font-bold flex items-center justify-between">
+                    <CardTitle className="text-base text-white flex items-center justify-between">
                       <span>Rebalancing Events Log</span>
-                      <Badge variant="outline" className="font-mono text-xs">
+                      <Badge variant="cyan" className="font-mono text-xs">
                         {btResult.rebalance_count} Executions • {formatCurrency(btResult.total_transaction_costs)} Total Fees
                       </Badge>
                     </CardTitle>
@@ -802,7 +801,7 @@ export default function SimulationsPage() {
                   <CardContent className="p-0">
                     <div className="overflow-x-auto max-h-60">
                       <table className="w-full text-xs text-left">
-                        <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 font-bold uppercase tracking-wider text-slate-500">
+                        <thead className="bg-[#0A0F1D] text-slate-400 border-b border-[#202D45] uppercase tracking-wider font-semibold">
                           <tr>
                             <th className="px-4 py-2.5">Date</th>
                             <th className="px-4 py-2.5 text-right">Pre-Rebalance Value</th>
@@ -810,13 +809,13 @@ export default function SimulationsPage() {
                             <th className="px-4 py-2.5 text-right">Fees Incurred</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
+                        <tbody className="divide-y divide-[#202D45] font-mono">
                           {btResult.rebalance_events.map((ev, i) => (
-                            <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
-                              <td className="px-4 py-2.5 font-mono">{ev.date}</td>
-                              <td className="px-4 py-2.5 text-right font-mono">{formatCurrency(ev.portfolio_value_pre)}</td>
-                              <td className="px-4 py-2.5 text-right font-mono">{formatCurrency(ev.turnover_value)}</td>
-                              <td className="px-4 py-2.5 text-right font-mono font-bold text-rose-600 dark:text-rose-400">
+                            <tr key={i} className="hover:bg-[#162032]/30">
+                              <td className="px-4 py-2.5 text-slate-300">{ev.date}</td>
+                              <td className="px-4 py-2.5 text-right text-slate-300">{formatCurrency(ev.portfolio_value_pre)}</td>
+                              <td className="px-4 py-2.5 text-right text-slate-300">{formatCurrency(ev.turnover_value)}</td>
+                              <td className="px-4 py-2.5 text-right text-rose-400 font-bold">
                                 {formatCurrency(ev.transaction_cost)}
                               </td>
                             </tr>
@@ -834,8 +833,11 @@ export default function SimulationsPage() {
             <EmptyState
               title="No Backtest Run Yet"
               description="Configure portfolio backtest parameters above and click 'Run Historical Backtest' to view historical performance."
-              actionLabel="Run Backtest"
-              onAction={handleRunBacktest}
+              action={
+                <Button variant="primary" size="sm" onClick={handleRunBacktest}>
+                  Run Backtest
+                </Button>
+              }
             />
           )}
         </div>
@@ -846,23 +848,21 @@ export default function SimulationsPage() {
       {/* ==================================================================== */}
       {activeTab === "monte_carlo" && (
         <div className="space-y-6">
-          <Card className="border-slate-200/80 dark:border-slate-800/80 shadow-fintech">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-xl flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-indigo-600" />
+              <CardTitle className="text-base text-white flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-cyan-400" />
                 Configure Monte Carlo Stochastic Projection
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs text-slate-400">
                 Generate thousands of Geometric Brownian Motion paths to estimate terminal wealth distributions and goal probabilities.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase">
-                    Initial Capital (₹)
-                  </label>
                   <Input
+                    label="Initial Capital (₹)"
                     type="number"
                     value={mcInitialVal}
                     onChange={(e) => setMcInitialVal(e.target.value)}
@@ -871,10 +871,8 @@ export default function SimulationsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase">
-                    Monthly SIP (₹)
-                  </label>
                   <Input
+                    label="Monthly SIP (₹)"
                     type="number"
                     value={mcMonthlySip}
                     onChange={(e) => setMcMonthlySip(e.target.value)}
@@ -883,10 +881,8 @@ export default function SimulationsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase">
-                    Horizon (Years)
-                  </label>
                   <Input
+                    label="Horizon (Years)"
                     type="number"
                     value={mcHorizonYears}
                     onChange={(e) => setMcHorizonYears(e.target.value)}
@@ -897,10 +893,8 @@ export default function SimulationsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase">
-                    Target Goal Amount (₹)
-                  </label>
                   <Input
+                    label="Target Goal Amount (₹)"
                     type="number"
                     value={mcTargetAmt}
                     onChange={(e) => setMcTargetAmt(e.target.value)}
@@ -909,10 +903,8 @@ export default function SimulationsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase">
-                    Expected Return (% p.a.)
-                  </label>
                   <Input
+                    label="Expected Return (% p.a.)"
                     type="number"
                     value={mcExpectedRet}
                     onChange={(e) => setMcExpectedRet(e.target.value)}
@@ -921,10 +913,8 @@ export default function SimulationsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase">
-                    Annual Volatility (%)
-                  </label>
                   <Input
+                    label="Annual Volatility (%)"
                     type="number"
                     value={mcVolatility}
                     onChange={(e) => setMcVolatility(e.target.value)}
@@ -933,13 +923,13 @@ export default function SimulationsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase">
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
                     Simulation Count
                   </label>
                   <select
                     value={mcSimCount}
                     onChange={(e) => setMcSimCount(e.target.value)}
-                    className="w-full h-11 px-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-semibold"
+                    className="w-full h-10 px-3 rounded-lg border border-[#202D45] bg-[#0E1524] text-white font-medium focus:outline-none focus:ring-1 focus:ring-cyan-500"
                   >
                     <option value="500">500 Trajectories (Fast)</option>
                     <option value="1000">1,000 Trajectories (Recommended)</option>
@@ -951,7 +941,8 @@ export default function SimulationsPage() {
                   <Button
                     onClick={handleRunMonteCarlo}
                     disabled={mcLoading}
-                    className="w-full h-11 font-bold text-sm bg-indigo-600 hover:bg-indigo-700 text-white"
+                    variant="primary"
+                    className="w-full h-10"
                   >
                     {mcLoading ? (
                       <RefreshCw className="w-4 h-4 animate-spin mr-2" />
@@ -964,8 +955,8 @@ export default function SimulationsPage() {
               </div>
 
               {mcError && (
-                <div className="mt-4 p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 flex items-center gap-3 text-rose-700 dark:text-rose-300 text-sm">
-                  <AlertCircle className="w-5 h-5 shrink-0" />
+                <div className="mt-4 p-3 rounded-xl bg-rose-950/40 border border-rose-500/30 flex items-center gap-2.5 text-rose-300 text-xs">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
                   <span>{mcError}</span>
                 </div>
               )}
@@ -979,22 +970,22 @@ export default function SimulationsPage() {
                 <MetricCard
                   title="Median Projected Wealth"
                   value={formatCurrency(mcResult.terminal_wealth.median)}
-                  subtitle={`50th percentile outcome at Year ${mcHorizonYears}`}
-                  icon={<Coins className="w-5 h-5" />}
-                  variant="brand"
+                  subtitle={`50th percentile at Year ${mcHorizonYears}`}
+                  icon={<Coins className="w-4 h-4" />}
+                  variant="cyan"
                 />
                 <MetricCard
                   title="Conservative Floor (P5)"
                   value={formatCurrency(mcResult.terminal_wealth.p5)}
                   subtitle="95% probability of exceeding"
-                  icon={<TrendingDown className="w-5 h-5" />}
+                  icon={<TrendingDown className="w-4 h-4" />}
                   variant="warning"
                 />
                 <MetricCard
                   title="Optimistic Ceiling (P95)"
                   value={formatCurrency(mcResult.terminal_wealth.p95)}
                   subtitle="Top 5th percentile outcome"
-                  icon={<TrendingUp className="w-5 h-5" />}
+                  icon={<TrendingUp className="w-4 h-4" />}
                   variant="success"
                 />
                 {Boolean(mcResult.goal_success_probability_pct) && (
@@ -1002,7 +993,7 @@ export default function SimulationsPage() {
                     title="Goal Success Probability"
                     value={formatPercentage(mcResult.goal_success_probability_pct)}
                     subtitle={`Target: ${formatCurrency(mcResult.target_amount)}`}
-                    icon={<CheckCircle2 className="w-5 h-5" />}
+                    icon={<CheckCircle2 className="w-4 h-4" />}
                     variant={
                       parseFloat(mcResult.goal_success_probability_pct || "0") >= 75
                         ? "success"
@@ -1015,19 +1006,19 @@ export default function SimulationsPage() {
               </div>
 
               {/* Percentile Trajectory Fan Chart */}
-              <Card className="border-slate-200/80 dark:border-slate-800/80 shadow-fintech">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="text-base font-bold flex items-center justify-between">
+                  <CardTitle className="text-base text-white flex items-center justify-between">
                     <span className="flex items-center gap-2">
-                      <LineChartIcon className="w-4 h-4 text-indigo-600" />
+                      <LineChartIcon className="w-4 h-4 text-cyan-400" />
                       Wealth Percentile Fan Chart (P5 • P25 • P50 • P75 • P95)
                     </span>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="cyan" className="text-xs font-mono">
                       {mcResult.num_simulations} Simulated Paths
                     </Badge>
                   </CardTitle>
-                  <CardDescription>
-                    Shaded probability cones over time. The solid purple line indicates median projected wealth.
+                  <CardDescription className="text-xs text-slate-400">
+                    Probability cones over time. The solid cyan line indicates median projected wealth.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -1036,22 +1027,22 @@ export default function SimulationsPage() {
                       <AreaChart data={mcResult.percentile_trajectory} margin={{ top: 10, right: 10, left: 20, bottom: 20 }}>
                         <defs>
                           <linearGradient id="p95p5Grad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#818cf8" stopOpacity={0.25} />
-                            <stop offset="95%" stopColor="#818cf8" stopOpacity={0.05} />
+                            <stop offset="5%" stopColor="#06B6D4" stopOpacity={0.25} />
+                            <stop offset="95%" stopColor="#06B6D4" stopOpacity={0.02} />
                           </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.2} />
-                        <XAxis dataKey="year" tick={{ fontSize: 10 }} label={{ value: "Horizon (Years)", position: "insideBottom", offset: -10, fontSize: 11 }} />
-                        <YAxis tick={{ fontSize: 10 }} tickFormatter={(v) => `₹${(v / 100000).toFixed(0)}L`} />
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#202D45" />
+                        <XAxis dataKey="year" tick={{ fontSize: 10, fill: "#94a3b8" }} label={{ value: "Horizon (Years)", position: "insideBottom", offset: -10, fontSize: 11, fill: "#64748b" }} />
+                        <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} tickFormatter={(v) => `₹${(v / 100000).toFixed(0)}L`} />
                         <Tooltip
                           formatter={(val: any, name: any) => [formatCurrency(val), name.toUpperCase()]}
-                          contentStyle={{ backgroundColor: "#0f172a", borderColor: "#334155", borderRadius: 12, color: "#fff" }}
+                          contentStyle={{ backgroundColor: "#0E1524", borderColor: "#202D45", borderRadius: 8, color: "#fff", fontSize: 12 }}
                         />
-                        <Area type="monotone" dataKey="p95" stroke="#a5b4fc" strokeWidth={1} fill="url(#p95p5Grad)" name="p95" />
-                        <Area type="monotone" dataKey="p75" stroke="#818cf8" strokeWidth={1.5} fill="#818cf8" fillOpacity={0.2} name="p75" />
-                        <Area type="monotone" dataKey="p50" stroke="#4f46e5" strokeWidth={3} fill="#4f46e5" fillOpacity={0.15} name="p50 (Median)" />
-                        <Area type="monotone" dataKey="p25" stroke="#6366f1" strokeWidth={1.5} fill="#6366f1" fillOpacity={0.1} name="p25" />
-                        <Area type="monotone" dataKey="p5" stroke="#f43f5e" strokeWidth={1.5} fill="none" name="p5 (Floor)" />
+                        <Area type="monotone" dataKey="p95" stroke="#38BDF8" strokeWidth={1} fill="url(#p95p5Grad)" name="p95" />
+                        <Area type="monotone" dataKey="p75" stroke="#22D3EE" strokeWidth={1.5} fill="#06B6D4" fillOpacity={0.15} name="p75" />
+                        <Area type="monotone" dataKey="p50" stroke="#06B6D4" strokeWidth={3} fill="#06B6D4" fillOpacity={0.1} name="p50 (Median)" />
+                        <Area type="monotone" dataKey="p25" stroke="#14B8A6" strokeWidth={1.5} fill="#14B8A6" fillOpacity={0.1} name="p25" />
+                        <Area type="monotone" dataKey="p5" stroke="#F43F5E" strokeWidth={1.5} fill="none" name="p5 (Floor)" />
                       </AreaChart>
                     </ResponsiveContainer>
                   </div>
@@ -1059,51 +1050,51 @@ export default function SimulationsPage() {
               </Card>
 
               {/* Terminal Distribution Stats Grid */}
-              <Card className="border-slate-200/80 dark:border-slate-800/80">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="text-base font-bold">Terminal Wealth Distribution Statistics</CardTitle>
+                  <CardTitle className="text-base text-white">Terminal Wealth Distribution Statistics</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 text-center">
-                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60">
-                      <p className="text-[11px] font-bold text-slate-500 uppercase">Mean</p>
-                      <p className="text-sm font-extrabold mt-1 font-mono text-slate-900 dark:text-slate-100">
+                    <div className="p-3 rounded-xl bg-[#0A0F1D] border border-[#202D45]">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase">Mean</p>
+                      <p className="text-xs font-mono font-bold mt-1 text-white">
                         {formatCurrency(mcResult.terminal_wealth.mean)}
                       </p>
                     </div>
-                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60">
-                      <p className="text-[11px] font-bold text-slate-500 uppercase">Median</p>
-                      <p className="text-sm font-extrabold mt-1 font-mono text-indigo-600 dark:text-indigo-400">
+                    <div className="p-3 rounded-xl bg-[#0A0F1D] border border-cyan-500/30">
+                      <p className="text-[10px] font-bold text-cyan-400 uppercase">Median</p>
+                      <p className="text-xs font-mono font-bold mt-1 text-cyan-300">
                         {formatCurrency(mcResult.terminal_wealth.median)}
                       </p>
                     </div>
-                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60">
-                      <p className="text-[11px] font-bold text-slate-500 uppercase">Std Deviation</p>
-                      <p className="text-sm font-extrabold mt-1 font-mono text-slate-700 dark:text-slate-300">
+                    <div className="p-3 rounded-xl bg-[#0A0F1D] border border-[#202D45]">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase">Std Deviation</p>
+                      <p className="text-xs font-mono font-bold mt-1 text-slate-300">
                         {formatCurrency(mcResult.terminal_wealth.std_dev)}
                       </p>
                     </div>
-                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60">
-                      <p className="text-[11px] font-bold text-slate-500 uppercase">P5 Floor</p>
-                      <p className="text-sm font-extrabold mt-1 font-mono text-rose-600 dark:text-rose-400">
+                    <div className="p-3 rounded-xl bg-[#0A0F1D] border border-rose-500/30">
+                      <p className="text-[10px] font-bold text-rose-400 uppercase">P5 Floor</p>
+                      <p className="text-xs font-mono font-bold mt-1 text-rose-400">
                         {formatCurrency(mcResult.terminal_wealth.p5)}
                       </p>
                     </div>
-                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60">
-                      <p className="text-[11px] font-bold text-slate-500 uppercase">P95 Ceiling</p>
-                      <p className="text-sm font-extrabold mt-1 font-mono text-emerald-600 dark:text-emerald-400">
+                    <div className="p-3 rounded-xl bg-[#0A0F1D] border border-emerald-500/30">
+                      <p className="text-[10px] font-bold text-emerald-400 uppercase">P95 Ceiling</p>
+                      <p className="text-xs font-mono font-bold mt-1 text-emerald-400">
                         {formatCurrency(mcResult.terminal_wealth.p95)}
                       </p>
                     </div>
-                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60">
-                      <p className="text-[11px] font-bold text-slate-500 uppercase">Sim Min</p>
-                      <p className="text-sm font-extrabold mt-1 font-mono text-slate-600 dark:text-slate-400">
+                    <div className="p-3 rounded-xl bg-[#0A0F1D] border border-[#202D45]">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase">Sim Min</p>
+                      <p className="text-xs font-mono font-bold mt-1 text-slate-400">
                         {formatCurrency(mcResult.terminal_wealth.min)}
                       </p>
                     </div>
-                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60">
-                      <p className="text-[11px] font-bold text-slate-500 uppercase">Sim Max</p>
-                      <p className="text-sm font-extrabold mt-1 font-mono text-slate-600 dark:text-slate-400">
+                    <div className="p-3 rounded-xl bg-[#0A0F1D] border border-[#202D45]">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase">Sim Max</p>
+                      <p className="text-xs font-mono font-bold mt-1 text-slate-300">
                         {formatCurrency(mcResult.terminal_wealth.max)}
                       </p>
                     </div>
@@ -1117,8 +1108,11 @@ export default function SimulationsPage() {
             <EmptyState
               title="No Monte Carlo Simulation Run Yet"
               description="Adjust capital, monthly SIP, and horizon parameters above and click 'Run Stochastic Simulation' to preview probabilistic wealth distributions."
-              actionLabel="Run 10-Year Simulation"
-              onAction={handleRunMonteCarlo}
+              action={
+                <Button variant="primary" size="sm" onClick={handleRunMonteCarlo}>
+                  Run 10-Year Simulation
+                </Button>
+              }
             />
           )}
         </div>
@@ -1129,26 +1123,26 @@ export default function SimulationsPage() {
       {/* ==================================================================== */}
       {activeTab === "scenarios" && (
         <div className="space-y-6">
-          <Card className="border-slate-200/80 dark:border-slate-800/80 shadow-fintech">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-xl flex items-center gap-2">
-                <Layers className="w-5 h-5 text-indigo-600" />
+              <CardTitle className="text-base text-white flex items-center gap-2">
+                <Layers className="w-4 h-4 text-cyan-400" />
                 Select Goal for Scenario Trade-Off Analysis
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs text-slate-400">
                 Compare higher contributions, extended deadlines, and return variations against your baseline goal without altering persisted records.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col sm:flex-row gap-4 items-end">
+              <div className="flex flex-col sm:flex-row gap-4 items-end text-xs">
                 <div className="flex-1">
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase">
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
                     Select Persisted Investment Goal
                   </label>
                   <select
                     value={selectedGoalId}
                     onChange={(e) => setSelectedGoalId(e.target.value)}
-                    className="w-full h-11 px-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-semibold"
+                    className="w-full h-10 px-3 rounded-lg border border-[#202D45] bg-[#0E1524] text-white font-medium focus:outline-none focus:ring-1 focus:ring-cyan-500"
                   >
                     {goals.map((g) => (
                       <option key={g.id} value={g.id}>
@@ -1162,7 +1156,8 @@ export default function SimulationsPage() {
                 <Button
                   onClick={handleRunGoalComparison}
                   disabled={scLoading}
-                  className="h-11 px-6 font-bold text-sm bg-indigo-600 hover:bg-indigo-700 text-white"
+                  variant="primary"
+                  className="h-10 px-6 font-semibold text-xs"
                 >
                   {scLoading ? (
                     <RefreshCw className="w-4 h-4 animate-spin mr-2" />
@@ -1174,8 +1169,8 @@ export default function SimulationsPage() {
               </div>
 
               {scError && (
-                <div className="mt-4 p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 flex items-center gap-3 text-rose-700 dark:text-rose-300 text-sm">
-                  <AlertCircle className="w-5 h-5 shrink-0" />
+                <div className="mt-4 p-3 rounded-xl bg-rose-950/40 border border-rose-500/30 flex items-center gap-2.5 text-rose-300 text-xs">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
                   <span>{scError}</span>
                 </div>
               )}
@@ -1186,13 +1181,13 @@ export default function SimulationsPage() {
             <div className="space-y-6 animate-fadeIn">
               {/* Recommendation Callout Banner */}
               {scResult.insights.length > 0 && (
-                <div className="p-5 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/80 shadow-xs space-y-2">
-                  <div className="flex items-center gap-2 font-bold text-sm text-indigo-950 dark:text-indigo-200">
-                    <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                <div className="p-4 rounded-xl bg-cyan-950/30 border border-cyan-500/30 space-y-2">
+                  <div className="flex items-center gap-2 font-bold text-xs text-cyan-200">
+                    <Sparkles className="w-4 h-4 text-cyan-400" />
                     Analytical Insights &amp; Recommendation
                   </div>
                   {scResult.insights.map((ins, i) => (
-                    <p key={i} className="text-xs text-indigo-900 dark:text-indigo-300">
+                    <p key={i} className="text-xs text-cyan-300/90">
                       • {ins}
                     </p>
                   ))}
@@ -1202,32 +1197,32 @@ export default function SimulationsPage() {
               {/* Side-by-Side Comparison Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {/* Baseline Card */}
-                <Card className="border-2 border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
+                <Card className="border-2 border-[#202D45] bg-[#0A0F1D]">
                   <CardHeader className="pb-3">
                     <Badge variant="outline" className="w-fit text-[10px] font-bold">
                       BASELINE
                     </Badge>
-                    <CardTitle className="text-base font-bold mt-1">{scResult.baseline.name}</CardTitle>
-                    <CardDescription className="text-xs">
-                      {scResult.baseline.horizon_months} Months • {formatPercentage(scResult.baseline.expected_annual_return_pct)} p.a.
+                    <CardTitle className="text-base font-bold text-white mt-1">{scResult.baseline.name}</CardTitle>
+                    <CardDescription className="text-xs text-slate-400 font-mono">
+                      {scResult.baseline.horizon_months}m • {formatPercentage(scResult.baseline.expected_annual_return_pct)} p.a.
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-3 pt-0">
+                  <CardContent className="space-y-3 pt-0 text-xs">
                     <div>
-                      <span className="text-[11px] text-slate-500 font-bold block uppercase">Monthly SIP</span>
-                      <span className="text-lg font-extrabold font-mono text-slate-900 dark:text-slate-100">
+                      <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">Monthly SIP</span>
+                      <span className="text-base font-mono font-bold text-white">
                         {formatCurrency(scResult.baseline.monthly_contribution)}
                       </span>
                     </div>
                     <div>
-                      <span className="text-[11px] text-slate-500 font-bold block uppercase">Deterministic FV</span>
-                      <span className="text-sm font-bold font-mono text-slate-700 dark:text-slate-300">
+                      <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">Deterministic FV</span>
+                      <span className="text-xs font-mono font-semibold text-slate-300">
                         {formatCurrency(scResult.baseline.deterministic_projected_value)}
                       </span>
                     </div>
-                    <div className="pt-2 border-t border-slate-200 dark:border-slate-800">
-                      <span className="text-[11px] text-slate-500 font-bold block uppercase">Goal Success Odds</span>
-                      <span className="text-xl font-extrabold font-mono text-indigo-600 dark:text-indigo-400">
+                    <div className="pt-2 border-t border-[#202D45]">
+                      <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">Goal Success Odds</span>
+                      <span className="text-lg font-mono font-extrabold text-cyan-400">
                         {formatPercentage(scResult.baseline.mc_goal_success_probability_pct)}
                       </span>
                     </div>
@@ -1238,47 +1233,47 @@ export default function SimulationsPage() {
                 {scResult.compared_scenarios.map((sc, idx) => (
                   <Card
                     key={idx}
-                    className="border border-indigo-200 dark:border-indigo-800/80 shadow-xs hover:border-indigo-500 transition-colors"
+                    className="border border-cyan-500/30 hover:border-cyan-400 transition-colors"
                   >
                     <CardHeader className="pb-3">
-                      <Badge variant="default" className="w-fit text-[10px] font-bold bg-indigo-600 text-white">
+                      <Badge variant="cyan" className="w-fit text-[10px] font-bold">
                         VARIANT {idx + 1}
                       </Badge>
-                      <CardTitle className="text-base font-bold mt-1 text-slate-900 dark:text-slate-100">
+                      <CardTitle className="text-base font-bold text-white mt-1">
                         {sc.name}
                       </CardTitle>
-                      <CardDescription className="text-xs">
-                        {sc.horizon_months} Months • {formatPercentage(sc.expected_annual_return_pct)} p.a.
+                      <CardDescription className="text-xs text-slate-400 font-mono">
+                        {sc.horizon_months}m • {formatPercentage(sc.expected_annual_return_pct)} p.a.
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-3 pt-0">
+                    <CardContent className="space-y-3 pt-0 text-xs">
                       <div>
-                        <span className="text-[11px] text-slate-500 font-bold block uppercase">Monthly SIP</span>
+                        <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">Monthly SIP</span>
                         <div className="flex items-center gap-1.5">
-                          <span className="text-lg font-extrabold font-mono text-slate-900 dark:text-slate-100">
+                          <span className="text-base font-mono font-bold text-white">
                             {formatCurrency(sc.monthly_contribution)}
                           </span>
                           {parseFloat(sc.contribution_delta_from_baseline) !== 0 && (
-                            <span className="text-[11px] font-bold font-mono text-indigo-600">
+                            <span className="text-[10px] font-mono font-bold text-cyan-400">
                               ({formatCurrency(sc.contribution_delta_from_baseline, "INR", { showPlusSign: true })})
                             </span>
                           )}
                         </div>
                       </div>
                       <div>
-                        <span className="text-[11px] text-slate-500 font-bold block uppercase">Deterministic FV</span>
-                        <span className="text-sm font-bold font-mono text-slate-700 dark:text-slate-300">
+                        <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">Deterministic FV</span>
+                        <span className="text-xs font-mono font-semibold text-slate-300">
                           {formatCurrency(sc.deterministic_projected_value)}
                         </span>
                       </div>
-                      <div className="pt-2 border-t border-slate-200 dark:border-slate-800">
-                        <span className="text-[11px] text-slate-500 font-bold block uppercase">Goal Success Odds</span>
+                      <div className="pt-2 border-t border-[#202D45]">
+                        <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">Goal Success Odds</span>
                         <div className="flex items-center gap-1.5">
-                          <span className="text-xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400">
+                          <span className="text-lg font-mono font-extrabold text-emerald-400">
                             {formatPercentage(sc.mc_goal_success_probability_pct)}
                           </span>
                           {parseFloat(sc.success_probability_delta_pct) > 0 && (
-                            <span className="text-xs font-bold text-emerald-600 font-mono">
+                            <span className="text-xs font-mono font-bold text-emerald-400">
                               (+{sc.success_probability_delta_pct}%)
                             </span>
                           )}
@@ -1290,46 +1285,46 @@ export default function SimulationsPage() {
               </div>
 
               {/* Detailed Comparison Table */}
-              <Card className="border-slate-200/80 dark:border-slate-800/80 overflow-hidden">
+              <Card className="overflow-hidden">
                 <CardHeader>
-                  <CardTitle className="text-base font-bold">Comprehensive Scenario Matrix</CardTitle>
+                  <CardTitle className="text-base text-white">Comprehensive Scenario Matrix</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs text-left">
-                      <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 font-bold uppercase tracking-wider text-slate-500">
+                      <thead className="bg-[#0A0F1D] text-slate-400 border-b border-[#202D45] uppercase tracking-wider font-semibold">
                         <tr>
-                          <th className="px-4 py-3">Scenario</th>
-                          <th className="px-4 py-3 text-right">Monthly SIP</th>
-                          <th className="px-4 py-3 text-right">Horizon</th>
-                          <th className="px-4 py-3 text-right">Deterministic FV</th>
-                          <th className="px-4 py-3 text-right">MC Median FV</th>
-                          <th className="px-4 py-3 text-right">P5 (Downside)</th>
-                          <th className="px-4 py-3 text-right">P95 (Upside)</th>
-                          <th className="px-4 py-3 text-right">Success Prob %</th>
+                          <th className="px-4 py-2.5">Scenario</th>
+                          <th className="px-4 py-2.5 text-right">Monthly SIP</th>
+                          <th className="px-4 py-2.5 text-right">Horizon</th>
+                          <th className="px-4 py-2.5 text-right">Deterministic FV</th>
+                          <th className="px-4 py-2.5 text-right">MC Median FV</th>
+                          <th className="px-4 py-2.5 text-right">P5 (Downside)</th>
+                          <th className="px-4 py-2.5 text-right">P95 (Upside)</th>
+                          <th className="px-4 py-2.5 text-right">Success Odds</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
-                        <tr className="bg-slate-50/50 dark:bg-slate-900/40 font-bold">
-                          <td className="px-4 py-3 text-indigo-600">{scResult.baseline.name} (Base)</td>
-                          <td className="px-4 py-3 text-right font-mono">{formatCurrency(scResult.baseline.monthly_contribution)}</td>
-                          <td className="px-4 py-3 text-right font-mono">{scResult.baseline.horizon_months}m</td>
-                          <td className="px-4 py-3 text-right font-mono">{formatCurrency(scResult.baseline.deterministic_projected_value)}</td>
-                          <td className="px-4 py-3 text-right font-mono">{formatCurrency(scResult.baseline.mc_median_projected_value)}</td>
-                          <td className="px-4 py-3 text-right font-mono text-rose-600">{formatCurrency(scResult.baseline.mc_p5_downside_value)}</td>
-                          <td className="px-4 py-3 text-right font-mono text-emerald-600">{formatCurrency(scResult.baseline.mc_p95_upside_value)}</td>
-                          <td className="px-4 py-3 text-right font-mono text-indigo-600">{formatPercentage(scResult.baseline.mc_goal_success_probability_pct)}</td>
+                      <tbody className="divide-y divide-[#202D45] font-mono">
+                        <tr className="bg-[#0A0F1D]/50 font-bold">
+                          <td className="px-4 py-2.5 text-cyan-400 font-sans">{scResult.baseline.name} (Base)</td>
+                          <td className="px-4 py-2.5 text-right">{formatCurrency(scResult.baseline.monthly_contribution)}</td>
+                          <td className="px-4 py-2.5 text-right">{scResult.baseline.horizon_months}m</td>
+                          <td className="px-4 py-2.5 text-right">{formatCurrency(scResult.baseline.deterministic_projected_value)}</td>
+                          <td className="px-4 py-2.5 text-right">{formatCurrency(scResult.baseline.mc_median_projected_value)}</td>
+                          <td className="px-4 py-2.5 text-right text-rose-400">{formatCurrency(scResult.baseline.mc_p5_downside_value)}</td>
+                          <td className="px-4 py-2.5 text-right text-emerald-400">{formatCurrency(scResult.baseline.mc_p95_upside_value)}</td>
+                          <td className="px-4 py-2.5 text-right text-cyan-400">{formatPercentage(scResult.baseline.mc_goal_success_probability_pct)}</td>
                         </tr>
                         {scResult.compared_scenarios.map((sc, i) => (
-                          <tr key={i} className="hover:bg-slate-50/30 dark:hover:bg-slate-900/30">
-                            <td className="px-4 py-3 font-bold text-slate-900 dark:text-slate-100">{sc.name}</td>
-                            <td className="px-4 py-3 text-right font-mono font-bold text-indigo-600">{formatCurrency(sc.monthly_contribution)}</td>
-                            <td className="px-4 py-3 text-right font-mono">{sc.horizon_months}m</td>
-                            <td className="px-4 py-3 text-right font-mono">{formatCurrency(sc.deterministic_projected_value)}</td>
-                            <td className="px-4 py-3 text-right font-mono">{formatCurrency(sc.mc_median_projected_value)}</td>
-                            <td className="px-4 py-3 text-right font-mono text-rose-600">{formatCurrency(sc.mc_p5_downside_value)}</td>
-                            <td className="px-4 py-3 text-right font-mono text-emerald-600">{formatCurrency(sc.mc_p95_upside_value)}</td>
-                            <td className="px-4 py-3 text-right font-mono font-bold text-emerald-600">{formatPercentage(sc.mc_goal_success_probability_pct)}</td>
+                          <tr key={i} className="hover:bg-[#162032]/30">
+                            <td className="px-4 py-2.5 font-bold text-white font-sans">{sc.name}</td>
+                            <td className="px-4 py-2.5 text-right font-bold text-cyan-300">{formatCurrency(sc.monthly_contribution)}</td>
+                            <td className="px-4 py-2.5 text-right">{sc.horizon_months}m</td>
+                            <td className="px-4 py-2.5 text-right">{formatCurrency(sc.deterministic_projected_value)}</td>
+                            <td className="px-4 py-2.5 text-right">{formatCurrency(sc.mc_median_projected_value)}</td>
+                            <td className="px-4 py-2.5 text-right text-rose-400">{formatCurrency(sc.mc_p5_downside_value)}</td>
+                            <td className="px-4 py-2.5 text-right text-emerald-400">{formatCurrency(sc.mc_p95_upside_value)}</td>
+                            <td className="px-4 py-2.5 text-right font-bold text-emerald-400">{formatPercentage(sc.mc_goal_success_probability_pct)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -1344,8 +1339,11 @@ export default function SimulationsPage() {
             <EmptyState
               title="No Goal Scenarios Compared Yet"
               description="Choose a goal and click 'Compare What-If Scenarios' to analyze trade-offs between higher contributions and extended time horizons."
-              actionLabel="Compare Sample Goal Scenarios"
-              onAction={handleRunGoalComparison}
+              action={
+                <Button variant="primary" size="sm" onClick={handleRunGoalComparison}>
+                  Compare Sample Goal Scenarios
+                </Button>
+              }
             />
           )}
         </div>
